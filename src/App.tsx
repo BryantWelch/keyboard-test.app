@@ -1,37 +1,47 @@
-import React, { useState, useEffect } from 'react';
-import styled, { ThemeProvider } from 'styled-components';
+import React, { useState, useCallback } from 'react';
+import { ThemeProvider } from 'styled-components';
 import { theme } from './styles/theme';
 import Navbar from './components/Navbar/Navbar';
 import Header from './components/Header/Header';
 import TestContainer from './components/TestContainer/TestContainer';
 import KeyHistory from './components/KeyHistory/KeyHistory';
+import Footer from './components/Footer/Footer';
+import styled from 'styled-components';
 
-const AppContainer = styled.div`
-  background-color: ${props => props.theme.colors.background};
+const AppWrapper = styled.div`
   min-height: 100vh;
-  color: ${props => props.theme.colors.text};
+  display: flex;
+  flex-direction: column;
+`;
+
+const MainContent = styled.main`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 `;
 
 const App: React.FC = () => {
   const [keyHistory, setKeyHistory] = useState<string[]>([]);
+  
+  const handleKeyPress = useCallback((key: string) => {
+    setKeyHistory(prev => [...prev, key]);
+  }, []);
 
-  useEffect(() => {
-    const handleKeyPress = (event: KeyboardEvent) => {
-      setKeyHistory(prev => [...prev, event.key]);
-    };
-
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
+  const handleReset = useCallback(() => {
+    setKeyHistory([]);
   }, []);
 
   return (
     <ThemeProvider theme={theme}>
-      <AppContainer>
-        <Navbar />
-        <Header />
-        <TestContainer />
-        <KeyHistory keys={keyHistory} />
-      </AppContainer>
+      <AppWrapper>
+        <MainContent>
+          <Navbar />
+          <Header />
+          <TestContainer onKeyPress={handleKeyPress} onReset={handleReset} />
+          <KeyHistory keys={keyHistory} />
+        </MainContent>
+        <Footer />
+      </AppWrapper>
     </ThemeProvider>
   );
 };

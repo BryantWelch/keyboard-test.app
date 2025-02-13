@@ -1,46 +1,101 @@
-# Getting Started with Create React App
+# 🎹 Keyboard Test App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Overview
 
-## Available Scripts
+Keyboard Test App is a modern, interactive web application designed to help users test and analyze keyboard input with precision and style. Whether you're a developer, gamer, or keyboard enthusiast, this tool provides comprehensive key press tracking and visualization.
 
-In the project directory, you can run:
+![Keyboard Test App Preview](./docs/preview.png)
 
-### `npm start`
+## 🌟 Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- **Real-time Key Press Tracking**
+  - Instantly visualize key presses
+  - Detect left and right variants of modifier keys
+  - Clear, intuitive key history display
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+- **Responsive Design**
+  - Works seamlessly across devices
+  - Adaptive layout for different screen sizes
+  - Modern, clean user interface
 
-### `npm test`
+- **Keyboard Layout Options**
+  - 75% keyboard layout
+  - More layouts coming soon!
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- **Detailed Interaction Tracking**
+  - Hover and press effects
+  - Reset functionality
+  - Comprehensive key state management
 
-### `npm run build`
+## 🚀 Getting Started
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Prerequisites
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- Node.js (v14 or later)
+- npm or Yarn
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Installation
 
-### `npm run eject`
+1. Clone the repository
+```bash
+git clone https://github.com/BryantWelch/keyboard-test.app.git
+cd keyboard-test.app
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+2. Install dependencies
+```bash
+npm install
+# or
+yarn install
+```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+3. Start the development server
+```bash
+npm start
+# or
+yarn start
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## 🛠 Tech Stack
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+- React
+- TypeScript
+- Styled Components
+- Framer Motion
 
-## Learn More
+## 🤝 Contributing
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Contributions are welcome! Please check out our [Contribution Guidelines](CONTRIBUTING.md).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Ways to Contribute
+- Report bugs
+- Suggest features
+- Submit pull requests
+- Improve documentation
+
+## 📦 Upcoming Features
+
+- Additional keyboard layouts
+- Key press analytics
+- Customization options
+- Performance metrics
+
+## 🔒 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 💖 Support
+
+If you find this project helpful, consider supporting its development:
+
+[![Buy Me a Coffee](https://storage.ko-fi.com/cdn/kofi5.png)](https://ko-fi.com/V7V01A0SJC)
+
+## 🌐 Community
+
+- [GitHub Discussions](https://github.com/BryantWelch/keyboard-test.app/discussions)
+- [Reddit r/MechanicalKeyboards](https://www.reddit.com/r/MechanicalKeyboards/)
+- [Keyboard Enthusiasts Discord](https://discord.gg/mechanicalkeyboards)
+
+---
+
+**Happy Typing! ⌨️**
