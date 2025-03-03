@@ -12,12 +12,14 @@ const AppWrapper = styled.div`
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
 `;
 
 const MainContent = styled.main`
   flex: 1;
   display: flex;
   flex-direction: column;
+  padding-top: 4.5rem; /* Add padding to account for the fixed navbar */
 `;
 
 const App: React.FC = () => {
@@ -34,8 +36,8 @@ const App: React.FC = () => {
   return (
     <ThemeProvider theme={theme}>
       <AppWrapper>
+        <Navbar />
         <MainContent>
-          <Navbar />
           <Header />
           <TestContainer onKeyPress={handleKeyPress} onReset={handleReset} />
           <KeyHistory keys={keyHistory} />

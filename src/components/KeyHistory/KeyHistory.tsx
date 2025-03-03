@@ -33,7 +33,7 @@ const HistoryContainer = styled.div`
   border: 1px solid ${props => props.theme.colors.primary};
   border-radius: 8px;
   padding: 1rem;
-  margin: 1rem auto;
+  margin: 1rem auto 3rem auto;
   width: 100%;
   max-width: 800px;
   height: 60px;

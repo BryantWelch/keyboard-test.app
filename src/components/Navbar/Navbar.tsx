@@ -1,13 +1,27 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import { GitHub, KeyboardArrowDown, KeyboardArrowUp, OpenInNew } from '@mui/icons-material';
+import { GitHub, KeyboardArrowDown, OpenInNew } from '@mui/icons-material';
 
 const Nav = styled.nav`
-  background-color: ${props => props.theme.colors.background};
+  background-color: ${props => props.theme.colors.glass};
+  backdrop-filter: ${props => props.theme.effects.blur};
   padding: 1rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 1000;
+  box-shadow: ${props => props.theme.shadows.navbar};
+`;
+
+const LeftSection = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 5rem;
 `;
 
 const Logo = styled.h1`
@@ -21,6 +35,10 @@ const Logo = styled.h1`
 const DropdownContainer = styled.div`
   position: relative;
   display: inline-block;
+  
+  &:hover > div {
+    display: block;
+  }
 `;
 
 const DropdownButton = styled.button`
@@ -38,8 +56,8 @@ const DropdownButton = styled.button`
   }
 `;
 
-const DropdownContent = styled.div<{ isOpen: boolean }>`
-  display: ${props => props.isOpen ? 'block' : 'none'};
+const DropdownContent = styled.div`
+  display: none;
   position: absolute;
   background-color: ${props => props.theme.colors.background};
   min-width: 160px;
@@ -72,27 +90,27 @@ const GitHubLink = styled.a`
 `;
 
 const Navbar: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
-
   return (
     <Nav>
-      <Logo>Keyboard Test</Logo>
-      
-      <DropdownContainer>
-        <DropdownButton onClick={() => setIsOpen(!isOpen)}>
-          External Tools
-          {isOpen ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
-        </DropdownButton>
+      <LeftSection>
+        <Logo>Keyboard Test</Logo>
         
-        <DropdownContent isOpen={isOpen}>
-          <DropdownLink href="https://display-test.app" target="_blank" rel="noopener noreferrer">
-            Display Test <OpenInNew fontSize="small" />
-          </DropdownLink>
-          <DropdownLink href="https://controller-test.app" target="_blank" rel="noopener noreferrer">
-            Controller Test <OpenInNew fontSize="small" />
-          </DropdownLink>
-        </DropdownContent>
-      </DropdownContainer>
+        <DropdownContainer>
+          <DropdownButton>
+            Other Tools
+            <KeyboardArrowDown />
+          </DropdownButton>
+          
+          <DropdownContent>
+            <DropdownLink href="https://display-test.app" target="_blank" rel="noopener noreferrer">
+              Display Test <OpenInNew fontSize="small" />
+            </DropdownLink>
+            <DropdownLink href="https://controller-test.app" target="_blank" rel="noopener noreferrer">
+              Controller Test <OpenInNew fontSize="small" />
+            </DropdownLink>
+          </DropdownContent>
+        </DropdownContainer>
+      </LeftSection>
 
       <GitHubLink 
         href="https://github.com/BryantWelch/keyboard-test.app" 
