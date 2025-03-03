@@ -25,12 +25,6 @@ const KeyRow = styled.div`
   justify-content: center;
 `;
 
-const KeyGroup = styled.div`
-  display: flex;
-  gap: 0.25rem;
-  margin-left: 0.5rem;
-`;
-
 const Keyboard65: React.FC<Keyboard65Props> = ({ onKeyPress, onReset }) => {
   const [{ testedKeys, pressedKeys }, { handleKeyPress }] = useKeyboardEvents(onKeyPress, onReset);
 

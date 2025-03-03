@@ -142,14 +142,6 @@ interface TabData {
   onClick: () => void;
 }
 
-const layoutDescriptions: Record<KeyboardType, string> = {
-  '60%': 'Compact layout without function row, navigation cluster, or numpad',
-  '65%': 'Compact layout with arrow keys and a few navigation keys',
-  '75%': 'Includes function row and navigation keys in a compact layout',
-  'TKL': 'Tenkeyless layout with function row and navigation cluster, no numpad',
-  'Full': 'Complete keyboard with numpad, navigation cluster, and function row'
-};
-
 const TestContainer: React.FC<TestContainerProps> = ({ onKeyPress, onReset }) => {
   const [activeTab, setActiveTab] = useState('keyTest');
   const [direction, setDirection] = useState(0);

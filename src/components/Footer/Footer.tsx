@@ -55,45 +55,16 @@ const ExternalLink = styled.a`
   text-decoration: none;
   position: relative;
   transition: color 0.2s;
-
+  
   &:after {
     content: '';
     position: absolute;
     width: 100%;
     transform: scaleX(0);
-    height: 1px;
-    bottom: -2px;
+    height: 2px;
+    bottom: -4px;
     left: 0;
-    background: linear-gradient(to right, ${props => props.theme.colors.primary}, ${props => props.theme.colors.text});
-    transform-origin: bottom right;
-    transition: transform 0.25s ease-out;
-  }
-
-  &:hover {
-    color: ${props => props.theme.colors.primary};
-    
-    &:after {
-      transform: scaleX(1);
-      transform-origin: bottom left;
-    }
-  }
-`;
-
-const InternalLink = styled.a`
-  color: ${props => props.theme.colors.text};
-  text-decoration: none;
-  position: relative;
-  transition: color 0.2s;
-
-  &:after {
-    content: '';
-    position: absolute;
-    width: 100%;
-    transform: scaleX(0);
-    height: 1px;
-    bottom: -2px;
-    left: 0;
-    background: linear-gradient(to right, ${props => props.theme.colors.primary}, ${props => props.theme.colors.text});
+    background-color: ${props => props.theme.colors.primary};
     transform-origin: bottom right;
     transition: transform 0.25s ease-out;
   }

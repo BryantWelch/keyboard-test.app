@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import Key from './Key';
+import Key, { KeySize } from './Key';
 import { useKeyboardEvents } from './useKeyboardEvents';
 
 interface Keyboard75Props {
@@ -33,7 +33,7 @@ const KeyboardFrame = styled.div`
 const KeyboardInner = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
   padding: 12px;
   border-radius: 8px;
   background: ${props => `${props.theme.colors.primary}15`};
@@ -45,40 +45,33 @@ const KeyboardInner = styled.div`
 
 const KeyRow = styled.div`
   display: flex;
-  gap: 2px;
+  gap: 4px;
   justify-content: center;
   &:not(:last-child) {
     margin-bottom: 2px;
   }
 `;
 
-const BottomKeyRow = styled(KeyRow)`
-  justify-content: flex-start;
-`;
-
 // Animation variants
 const layoutVariants = {
   initial: {
     opacity: 0,
-    scale: 0.95,
     y: 20,
   },
   animate: {
     opacity: 1,
-    scale: 1,
     y: 0,
     transition: {
-      duration: 0.3,
-      ease: 'easeOut',
+      duration: 0.5,
+      ease: "easeOut",
     },
   },
   exit: {
     opacity: 0,
-    scale: 0.95,
-    y: 20,
+    y: -20,
     transition: {
-      duration: 0.2,
-      ease: 'easeIn',
+      duration: 0.3,
+      ease: "easeIn",
     },
   },
 };
@@ -88,12 +81,13 @@ const Keyboard75: React.FC<Keyboard75Props> = ({ onKeyPress, onReset }) => {
   const [{ testedKeys, pressedKeys }, { handleKeyPress }] = useKeyboardEvents(onKeyPress, onReset);
 
   // Helper function to create key props
-  const createKeyProps = (displayName: string, keyName: string, secondary?: string, isSpecial: boolean = false) => ({
+  const createKeyProps = (displayName: string, keyName: string, secondary?: string, isSpecial: boolean = false, size?: KeySize) => ({
     label: { primary: displayName, secondary },
     onKeyPress: () => handleKeyPress(keyName),
     isTested: testedKeys.has(keyName),
     isPressed: pressedKeys.has(keyName),
     isSpecialKey: isSpecial,
+    size,
   });
 
   return (
@@ -120,12 +114,14 @@ const Keyboard75: React.FC<Keyboard75Props> = ({ onKeyPress, onReset }) => {
             <Key {...createKeyProps('F10', 'F10', undefined, true)} />
             <Key {...createKeyProps('F11', 'F11', undefined, true)} />
             <Key {...createKeyProps('F12', 'F12', undefined, true)} />
+            <Key {...createKeyProps('Prt Sc', 'PrintScreen', undefined, true)} />
+            <Key {...createKeyProps('Pause', 'Pause', undefined, true)} />
             <Key {...createKeyProps('Delete', 'Delete', undefined, true)} />
           </KeyRow>
 
           {/* Number Row */}
           <KeyRow>
-            <Key {...createKeyProps('`', '`', '~')} />
+            <Key {...createKeyProps('~', '`', '`', true)} />
             <Key {...createKeyProps('1', '1', '!')} />
             <Key {...createKeyProps('2', '2', '@')} />
             <Key {...createKeyProps('3', '3', '#')} />
@@ -138,12 +134,13 @@ const Keyboard75: React.FC<Keyboard75Props> = ({ onKeyPress, onReset }) => {
             <Key {...createKeyProps('0', '0', ')')} />
             <Key {...createKeyProps('-', '-', '_')} />
             <Key {...createKeyProps('=', '=', '+')} />
-            <Key {...createKeyProps('Backspace', 'Backspace', undefined, true)} size="2u" />
+            <Key {...createKeyProps('Backspace', 'Backspace', undefined, true, '2.1u')} />
+            <Key {...createKeyProps('Home', 'Home', undefined, true)} />
           </KeyRow>
 
           {/* Top Alpha Row */}
           <KeyRow>
-            <Key {...createKeyProps('Tab', 'Tab', undefined, true)} size="1.5u" />
+            <Key {...createKeyProps('Tab', 'Tab', undefined, true, '1.55u')} />
             <Key {...createKeyProps('Q', 'Q')} />
             <Key {...createKeyProps('W', 'W')} />
             <Key {...createKeyProps('E', 'E')} />
@@ -156,12 +153,13 @@ const Keyboard75: React.FC<Keyboard75Props> = ({ onKeyPress, onReset }) => {
             <Key {...createKeyProps('P', 'P')} />
             <Key {...createKeyProps('[', '[', '{')} />
             <Key {...createKeyProps(']', ']', '}')} />
-            <Key {...createKeyProps('\\', '\\', '|', true)} size="1.5u" />
+            <Key {...createKeyProps('\\', '\\', '|', true, '1.55u')} />
+            <Key {...createKeyProps('End', 'End', undefined, true)} />
           </KeyRow>
 
           {/* Middle Alpha Row */}
           <KeyRow>
-            <Key {...createKeyProps('Caps Lock', 'Caps Lock', undefined, true)} size="1.75u" />
+            <Key {...createKeyProps('Caps', 'Caps Lock', undefined, true, '1.85u')} />
             <Key {...createKeyProps('A', 'A')} />
             <Key {...createKeyProps('S', 'S')} />
             <Key {...createKeyProps('D', 'D')} />
@@ -173,12 +171,13 @@ const Keyboard75: React.FC<Keyboard75Props> = ({ onKeyPress, onReset }) => {
             <Key {...createKeyProps('L', 'L')} />
             <Key {...createKeyProps(';', ';', ':')} />
             <Key {...createKeyProps("'", "'", '"')} />
-            <Key {...createKeyProps('Enter', 'Enter', undefined, true)} size="2.25u" />
+            <Key {...createKeyProps('Enter', 'Enter', undefined, true, '2.4u')} />
+            <Key {...createKeyProps('Pg Up', 'PageUp', undefined, true)} />
           </KeyRow>
 
           {/* Bottom Alpha Row */}
           <KeyRow>
-            <Key {...createKeyProps('Shift', 'L-Shift', undefined, true)} size="2.25u" />
+            <Key {...createKeyProps('Shift', 'L-Shift', undefined, true, '2.35u')} />
             <Key {...createKeyProps('Z', 'Z')} />
             <Key {...createKeyProps('X', 'X')} />
             <Key {...createKeyProps('C', 'C')} />
@@ -189,23 +188,24 @@ const Keyboard75: React.FC<Keyboard75Props> = ({ onKeyPress, onReset }) => {
             <Key {...createKeyProps(',', ',', '<')} />
             <Key {...createKeyProps('.', '.', '>')} />
             <Key {...createKeyProps('/', '/', '?')} />
-            <Key {...createKeyProps('Shift', 'R-Shift', undefined, true)} size="1.75u" />
-            <Key {...createKeyProps('↑', '↑', undefined, true)} />
+            <Key {...createKeyProps('Shift', 'R-Shift', undefined, true, '1.85u')} />
+            <Key {...createKeyProps('↑', 'ArrowUp')} />
+            <Key {...createKeyProps('Pg Dn', 'PageDown', undefined, true)} />
           </KeyRow>
 
           {/* Bottom Row */}
-          <BottomKeyRow>
-            <Key {...createKeyProps('Ctrl', 'L-Ctrl', undefined, true)} size="1.25u" />
-            <Key {...createKeyProps('Win', 'Win', undefined, true)} size="1.25u" />
-            <Key {...createKeyProps('Alt', 'L-Alt', undefined, true)} size="1.25u" />
-            <Key {...createKeyProps('Space', 'Space', undefined, true)} size="6.25u" />
-            <Key {...createKeyProps('Alt', 'R-Alt', undefined, true)} size="1.25u" />
-            <Key {...createKeyProps('Fn', 'Fn', undefined, true)} size="1.25u" />
-            <Key {...createKeyProps('Ctrl', 'R-Ctrl', undefined, true)} size="1.25u" />
-            <Key {...createKeyProps('←', '←', undefined, true)} />
-            <Key {...createKeyProps('↓', '↓', undefined, true)} />
-            <Key {...createKeyProps('→', '→', undefined, true)} />
-          </BottomKeyRow>
+          <KeyRow>
+            <Key {...createKeyProps('Ctrl', 'L-Ctrl', undefined, true, '1.25u')} />
+            <Key {...createKeyProps('Win', 'Win', undefined, true, '1.25u')} />
+            <Key {...createKeyProps('Alt', 'L-Alt', undefined, true, '1.25u')} />
+            <Key {...createKeyProps('', 'Space', undefined, false, '6.45u')} />
+            <Key {...createKeyProps('Alt', 'R-Alt', undefined, true, '1.2u')} />
+            <Key {...createKeyProps('Win', 'R-Win', undefined, true, '1.2u')} />
+            <Key {...createKeyProps('Ctrl', 'R-Ctrl', undefined, true, '1.2u')} />
+            <Key {...createKeyProps('←', 'ArrowLeft')} />
+            <Key {...createKeyProps('↓', 'ArrowDown')} />
+            <Key {...createKeyProps('→', 'ArrowRight')} />
+          </KeyRow>
         </KeyboardInner>
       </KeyboardFrame>
     </KeyboardContainer>
