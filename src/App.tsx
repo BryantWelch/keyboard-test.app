@@ -1,12 +1,16 @@
 import React, { useState, useCallback } from 'react';
 import { ThemeProvider } from 'styled-components';
+import styled from 'styled-components';
+
+// Theme
 import { theme } from './styles/theme';
+
+// Components
 import Navbar from './components/Navbar/Navbar';
 import Header from './components/Header/Header';
 import TestContainer from './components/TestContainer/TestContainer';
 import KeyHistory from './components/KeyHistory/KeyHistory';
 import Footer from './components/Footer/Footer';
-import styled from 'styled-components';
 
 const AppWrapper = styled.div`
   min-height: 100vh;
