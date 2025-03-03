@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
-import Layout75 from '../Keyboard/layouts/75Layout';
-import { KeyboardLayout } from '../Keyboard/types/keyboard.types';
+import { KeyboardSelector, KeyboardType } from '../Keyboards';
 
 interface TestContainerProps {
   onKeyPress?: (key: string) => void;
@@ -19,6 +18,8 @@ const Container = styled.div`
   min-height: 400px;
   position: relative;
   box-shadow: ${props => props.theme.shadows.main};
+  display: grid;
+  grid-template-rows: auto 1fr auto;
 `;
 
 const TabContainer = styled.div<{ position: 'top' | 'bottom' }>`
@@ -49,44 +50,59 @@ const ContentArea = styled(motion.div)`
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
+  overflow: hidden;
 `;
 
 const LayoutPreview = styled.div`
+  width: 100%;
+  max-width: 800px;
   display: flex;
-  gap: 2rem;
-  flex-wrap: wrap;
-  justify-content: center;
-  padding: 2rem;
-`;
-
-const LayoutOption = styled.div<{ active: boolean }>`
-  background: ${props => props.active ? `${props.theme.colors.primary}20` : 'transparent'};
-  border: 1px solid ${props => props.theme.colors.primary};
-  border-radius: 8px;
-  padding: 1rem;
-  cursor: pointer;
-  transition: ${props => props.theme.transitions.default};
-  width: 200px;
-
-  &:hover {
-    background: ${props => props.theme.colors.primary}20;
-    transform: translateY(-2px);
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  
+  h3 {
+    color: ${props => props.theme.colors.text};
+    margin-top: 0;
   }
 `;
 
-const LayoutTitle = styled.h3`
-  color: ${props => props.theme.colors.text};
-  margin: 0 0 0.5rem 0;
+const LayoutGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+  width: 100%;
 `;
 
-const LayoutDescription = styled.p`
-  color: ${props => props.theme.colors.text}cc;
-  font-size: 0.9rem;
-  margin: 0;
+const LayoutCard = styled.div<{ active: boolean }>`
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid ${props => props.active ? props.theme.colors.primary : props.theme.colors.primary + '40'};
+  background: ${props => props.active ? props.theme.colors.primary + '20' : 'transparent'};
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: ${props => props.active ? props.theme.colors.primary + '30' : props.theme.colors.primary + '10'};
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  h4 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    color: ${props => props.theme.colors.text};
+  }
+  
+  p {
+    margin: 0;
+    color: ${props => props.theme.colors.text + 'cc'};
+  }
 `;
 
 const ResetButton = styled(Tab)`
-  margin-left: auto; // Push to the right
+  margin-left: auto; /* Push to the right */
   background: ${props => props.theme.colors.primary}20;
   
   &:hover {
@@ -103,287 +119,199 @@ const ResetButton = styled(Tab)`
 const slideVariants = {
   enter: (direction: number) => ({
     x: direction > 0 ? 1000 : -1000,
-    opacity: 0
+    opacity: 0,
+    position: "absolute" as const
   }),
   center: {
-    zIndex: 1,
     x: 0,
-    opacity: 1
+    opacity: 1,
+    zIndex: 1,
+    position: "relative" as const
   },
   exit: (direction: number) => ({
-    zIndex: 0,
     x: direction < 0 ? 1000 : -1000,
-    opacity: 0
+    opacity: 0,
+    zIndex: 0,
+    position: "absolute" as const
   })
 };
 
 interface TabData {
   id: string;
   label: string;
-  content: React.ReactNode;
+  onClick: () => void;
 }
 
-const layoutDescriptions: Record<KeyboardLayout, string> = {
+const layoutDescriptions: Record<KeyboardType, string> = {
   '60%': 'Compact layout without function row, navigation cluster, or numpad',
-  '65%': 'Similar to 60% but includes arrow keys and some navigation keys',
+  '65%': 'Compact layout with arrow keys and a few navigation keys',
   '75%': 'Includes function row and navigation keys in a compact layout',
-  'TKL': 'Full keyboard without numpad',
-  'Full': 'Full keyboard with all standard keys'
+  'TKL': 'Tenkeyless layout with function row and navigation cluster, no numpad',
+  'Full': 'Complete keyboard with numpad, navigation cluster, and function row'
 };
 
 const TestContainer: React.FC<TestContainerProps> = ({ onKeyPress, onReset }) => {
   const [activeTab, setActiveTab] = useState('keyTest');
-  const [currentLayout, setCurrentLayout] = useState<KeyboardLayout>('75%');
-  const [testedKeys, setTestedKeys] = useState<Set<string>>(new Set());
-  const [pressedKeys, setPressedKeys] = useState<Set<string>>(new Set());
+  const [direction, setDirection] = useState(0);
+  const [currentLayout, setCurrentLayout] = useState<KeyboardType>('75%');
 
-  const handleReset = useCallback(() => {
-    setTestedKeys(new Set());
-    setPressedKeys(new Set());
-    onReset?.();
-  }, [onReset]);
-
-  const handleKeyPress = useCallback((key: string) => {
-    setTestedKeys(prev => new Set(prev).add(key));
-    setPressedKeys(prev => new Set(prev).add(key));
-    onKeyPress?.(key);
-  }, [onKeyPress]);
-
-  const handleKeyDown = useCallback((key: string) => {
-    handleKeyPress(key);
-  }, [handleKeyPress]);
-
-  const handleKeyUp = useCallback((key: string) => {
-    setPressedKeys(prev => {
-      const newKeys = new Set(prev);
-      newKeys.delete(key);
-      return newKeys;
-    });
-  }, []);
-
-  useEffect(() => {
-    const handleKeyUpEvent = (event: KeyboardEvent) => {
-      event.preventDefault();
-
-      let keyName = '';
-      switch (event.code) {
-        case 'ShiftLeft':
-        case 'ShiftRight':
-          keyName = 'Shift';
-          break;
-        case 'ControlLeft':
-        case 'ControlRight':
-          keyName = 'Ctrl';
-          break;
-        case 'AltLeft':
-        case 'AltRight':
-          keyName = 'Alt';
-          break;
-        case 'Space':
-          keyName = 'Space';
-          break;
-        case 'Enter':
-          keyName = 'Enter';
-          break;
-        case 'Escape':
-          keyName = 'ESC';
-          break;
-        case 'ArrowUp':
-          keyName = '↑';
-          break;
-        case 'ArrowDown':
-          keyName = '↓';
-          break;
-        case 'ArrowLeft':
-          keyName = '←';
-          break;
-        case 'ArrowRight':
-          keyName = '→';
-          break;
-        case 'Backquote':
-          keyName = '`';
-          break;
-        case 'BracketLeft':
-          keyName = '[';
-          break;
-        case 'BracketRight':
-          keyName = ']';
-          break;
-        case 'Backslash':
-          keyName = '\\';
-          break;
-        case 'Semicolon':
-          keyName = ';';
-          break;
-        case 'Quote':
-          keyName = "'";
-          break;
-        case 'Comma':
-          keyName = ',';
-          break;
-        case 'Period':
-          keyName = '.';
-          break;
-        case 'Slash':
-          keyName = '/';
-          break;
-        case 'MetaLeft':
-        case 'MetaRight':
-          keyName = 'Win';
-          break;
-        case 'CapsLock':
-          keyName = 'Caps Lock';
-          break;
-        case 'Backspace':
-          keyName = 'Backspace';
-          break;
-        case 'Delete':
-          keyName = 'Delete';
-          break;
-        case 'Tab':
-          keyName = 'Tab';
-          break;
-        case 'Minus':
-          keyName = '-';
-          break;
-        case 'Equal':
-          keyName = '=';
-          break;
-        default:
-          if (event.code.match(/^F(\d+)$/)) {
-            keyName = event.code;
-          } else {
-            keyName = event.key.length === 1 ? event.key.toUpperCase() : event.key;
-          }
-      }
-
-      if (keyName) {
-        handleKeyUp(keyName);
-      }
-    };
-
-    const handleKeyDownEvent = (event: KeyboardEvent) => {
-      event.preventDefault();
-      handleKeyDown(event.key);
-    };
-
-    window.addEventListener('keyup', handleKeyUpEvent);
-    window.addEventListener('keydown', handleKeyDownEvent);
-    return () => {
-      window.removeEventListener('keyup', handleKeyUpEvent);
-      window.removeEventListener('keydown', handleKeyDownEvent);
-    };
-  }, [handleKeyDown, handleKeyUp]);
-
-  const handleLayoutChange = (layout: KeyboardLayout) => {
+  const handleTabClick = (tabId: string) => {
+    // Set animation direction based on tab order
+    const tabOrder = ['keyTest', 'rolloverTest', 'typingTest', 'layout', 'themes', 'language'];
+    const currentIndex = tabOrder.indexOf(activeTab);
+    const newIndex = tabOrder.indexOf(tabId);
+    setDirection(newIndex > currentIndex ? 1 : -1);
+    
+    setActiveTab(tabId);
+  };
+  
+  const handleLayoutChange = (layout: KeyboardType) => {
     setCurrentLayout(layout);
+    // Navigate back to the key test tab
     setActiveTab('keyTest');
   };
-
+  
+  const getCurrentContent = () => {
+    switch (activeTab) {
+      case 'keyTest':
+        return <KeyboardSelector onKeyPress={onKeyPress} onReset={onReset} initialLayout={currentLayout} />;
+      case 'rolloverTest':
+        return <div>Rollover Test Content</div>;
+      case 'typingTest':
+        return <div>Typing Test Content</div>;
+      case 'layout':
+        return (
+          <LayoutPreview>
+            <h3>Select a Layout</h3>
+            <LayoutGrid>
+              <LayoutCard 
+                active={currentLayout === '60%'} 
+                onClick={() => handleLayoutChange('60%')}
+              >
+                <h4>60% Layout</h4>
+                <p>Compact layout without function row, navigation cluster, or numpad</p>
+              </LayoutCard>
+              <LayoutCard 
+                active={currentLayout === '65%'} 
+                onClick={() => handleLayoutChange('65%')}
+              >
+                <h4>65% Layout</h4>
+                <p>Compact layout with arrow keys and a few navigation keys</p>
+              </LayoutCard>
+              <LayoutCard 
+                active={currentLayout === '75%'} 
+                onClick={() => handleLayoutChange('75%')}
+              >
+                <h4>75% Layout</h4>
+                <p>Includes function row and navigation keys in a compact layout</p>
+              </LayoutCard>
+              <LayoutCard 
+                active={currentLayout === 'TKL'} 
+                onClick={() => handleLayoutChange('TKL')}
+              >
+                <h4>TKL Layout</h4>
+                <p>Tenkeyless layout with function row and navigation cluster, no numpad</p>
+              </LayoutCard>
+              <LayoutCard 
+                active={currentLayout === 'Full'} 
+                onClick={() => handleLayoutChange('Full')}
+              >
+                <h4>Full Layout</h4>
+                <p>Complete keyboard with numpad, navigation cluster, and function row</p>
+              </LayoutCard>
+            </LayoutGrid>
+          </LayoutPreview>
+        );
+      case 'themes':
+        return <div>Theme Settings</div>;
+      case 'language':
+        return <div>Language Settings</div>;
+      default:
+        return <div>Select a test type</div>;
+    }
+  };
+  
   const topTabs: TabData[] = [
     {
       id: 'keyTest',
       label: 'Key Test',
-      content: (
-        <Layout75 
-          onKeyPress={handleKeyPress}
-          testedKeys={testedKeys}
-          pressedKeys={pressedKeys}
-        />
-      )
+      onClick: () => handleTabClick('keyTest')
     },
     {
       id: 'rolloverTest',
       label: 'Rollover Test',
-      content: <div>Rollover Test Content</div>
+      onClick: () => handleTabClick('rolloverTest')
     },
     {
       id: 'typingTest',
       label: 'Typing Test',
-      content: <div>Typing Test Content</div>
+      onClick: () => handleTabClick('typingTest')
     }
   ];
-
+  
   const bottomTabs: TabData[] = [
     {
       id: 'layout',
       label: 'Layout',
-      content: (
-        <LayoutPreview>
-          {Object.entries(layoutDescriptions).map(([layout, description]) => (
-            <LayoutOption
-              key={layout}
-              active={currentLayout === layout}
-              onClick={() => handleLayoutChange(layout as KeyboardLayout)}
-            >
-              <LayoutTitle>{layout}</LayoutTitle>
-              <LayoutDescription>{description}</LayoutDescription>
-            </LayoutOption>
-          ))}
-        </LayoutPreview>
-      )
+      onClick: () => handleTabClick('layout')
     },
     {
       id: 'themes',
       label: 'Themes',
-      content: <div>Theme Settings</div>
+      onClick: () => handleTabClick('themes')
     },
     {
       id: 'language',
       label: 'Language',
-      content: <div>Language Settings</div>
+      onClick: () => handleTabClick('language')
     }
   ];
-
-  const handleTabChange = (tabId: string) => {
-    setActiveTab(tabId);
-  };
-
-  const getCurrentContent = () => {
-    if (activeTab === 'keyTest') {
-      return topTabs.find(tab => tab.id === activeTab)?.content;
-    }
-    return bottomTabs.find(tab => tab.id === activeTab)?.content;
-  };
 
   return (
     <Container>
       <TabContainer position="top">
         {topTabs.map(tab => (
-          <Tab
+          <Tab 
             key={tab.id}
             active={activeTab === tab.id}
-            onClick={() => handleTabChange(tab.id)}
+            onClick={tab.onClick}
           >
             {tab.label}
           </Tab>
         ))}
       </TabContainer>
 
-      <ContentArea
-        key={activeTab}
-        initial="enter"
-        animate="center"
-        exit="exit"
-        variants={slideVariants}
-      >
-        {getCurrentContent()}
-      </ContentArea>
+      <AnimatePresence custom={direction} initial={false} mode="sync">
+        <ContentArea
+          key={activeTab}
+          custom={direction}
+          variants={slideVariants}
+          initial="enter"
+          animate="center"
+          exit="exit"
+          transition={{
+            x: { type: "tween", duration: 0.3, ease: "easeInOut" },
+            opacity: { duration: 0.2 }
+          }}
+        >
+          {getCurrentContent()}
+        </ContentArea>
+      </AnimatePresence>
 
       <TabContainer position="bottom">
         {bottomTabs.map(tab => (
-          <Tab
+          <Tab 
             key={tab.id}
             active={activeTab === tab.id}
-            onClick={() => handleTabChange(tab.id)}
+            onClick={tab.onClick}
           >
             {tab.label}
           </Tab>
         ))}
-        <ResetButton
+        <ResetButton 
           as={motion.button}
           active={false}
-          onClick={handleReset}
+          onClick={onReset}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >

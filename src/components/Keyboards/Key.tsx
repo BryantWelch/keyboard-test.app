@@ -2,7 +2,23 @@ import React from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { Microsoft } from '@mui/icons-material';
-import { KeyProps, KeySize } from '../types/keyboard.types';
+
+export type KeySize = '1u' | '1.25u' | '1.5u' | '1.75u' | '2u' | '2.25u' | '2.75u' | '6.25u';
+
+export interface KeyLabel {
+  primary: string;
+  secondary?: string;
+}
+
+export interface KeyProps {
+  label: KeyLabel;
+  size?: KeySize;
+  isPressed?: boolean;
+  isTested?: boolean;
+  isSpecialKey?: boolean;
+  className?: string;
+  onKeyPress?: () => void;
+}
 
 const KEY_UNIT = 50; // Base unit for key size in pixels
 
