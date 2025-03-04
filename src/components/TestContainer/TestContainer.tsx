@@ -146,10 +146,11 @@ const TestContainer: React.FC<TestContainerProps> = ({ onKeyPress, onReset }) =>
   const [activeTab, setActiveTab] = useState('keyTest');
   const [direction, setDirection] = useState(0);
   const [currentLayout, setCurrentLayout] = useState<KeyboardType>('75%');
+  const [currentType, setCurrentType] = useState('qwerty');
   const [keyboardKey, setKeyboardKey] = useState(0);
 
   const handleTabClick = (tabId: string) => {
-    const tabOrder = ['keyTest', 'rolloverTest', 'typingTest', 'layout', 'themes', 'language'];
+    const tabOrder = ['keyTest', 'rolloverTest', 'typingTest', 'layout', 'type', 'themes', 'language'];
     const currentIndex = tabOrder.indexOf(activeTab);
     const newIndex = tabOrder.indexOf(tabId);
     setDirection(newIndex > currentIndex ? 1 : -1);
@@ -160,6 +161,12 @@ const TestContainer: React.FC<TestContainerProps> = ({ onKeyPress, onReset }) =>
   const handleLayoutChange = (layout: KeyboardType) => {
     setCurrentLayout(layout);
     setActiveTab('keyTest');
+  };
+
+  const handleTypeChange = (type: string) => {
+    setCurrentType(type);
+    // Not actually changing anything yet, just updating the state
+    console.log(`Type changed to: ${type}`);
   };
 
   const handleReset = () => {
@@ -226,6 +233,35 @@ const TestContainer: React.FC<TestContainerProps> = ({ onKeyPress, onReset }) =>
             </LayoutGrid>
           </LayoutPreview>
         );
+      case 'type':
+        return (
+          <LayoutPreview>
+            <h3>Select a Type</h3>
+            <LayoutGrid>
+              <LayoutCard 
+                active={currentType === 'qwerty'} 
+                onClick={() => handleTypeChange('qwerty')}
+              >
+                <h4>QWERTY</h4>
+                <p>Standard keyboard layout used by most keyboards</p>
+              </LayoutCard>
+              <LayoutCard 
+                active={currentType === 'dvorak'} 
+                onClick={() => handleTypeChange('dvorak')}
+              >
+                <h4>Dvorak</h4>
+                <p>Designed to increase typing speed and reduce finger fatigue</p>
+              </LayoutCard>
+              <LayoutCard 
+                active={currentType === 'colemak'} 
+                onClick={() => handleTypeChange('colemak')}
+              >
+                <h4>Colemak</h4>
+                <p>Modern alternative to QWERTY and Dvorak with an easier learning curve</p>
+              </LayoutCard>
+            </LayoutGrid>
+          </LayoutPreview>
+        );
       case 'themes':
         return <div>Themes Content</div>;
       case 'language':
@@ -258,6 +294,11 @@ const TestContainer: React.FC<TestContainerProps> = ({ onKeyPress, onReset }) =>
       id: 'layout',
       label: 'Layout',
       onClick: () => handleTabClick('layout')
+    },
+    {
+      id: 'type',
+      label: 'Type',
+      onClick: () => handleTabClick('type')
     },
     {
       id: 'themes',
