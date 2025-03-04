@@ -82,12 +82,20 @@ const KeyCap = styled(motion.div)<{
   height: 100%;
   border-radius: 6px;
   background: ${props => {
-    const baseColor = props.$isSpecialKey ? 
-      props.theme.colors.secondary : 
-      props.theme.colors.primary;
-    return props.$isTested ? 
-      `${baseColor}80` : 
-      baseColor;
+    if (props.$isPressed) {
+      // Key is currently being pressed - show accent color
+      return props.theme.colors.accent + '40';
+    } else if (props.$isTested) {
+      // Key was tested but not currently pressed - show a subtle highlight
+      return props.$isSpecialKey ? 
+        props.theme.colors.secondary + '80' : 
+        props.theme.colors.primary + '80';
+    } else {
+      // Key was not tested or pressed - show normal color
+      return props.$isSpecialKey ? 
+        props.theme.colors.secondary : 
+        props.theme.colors.primary;
+    }
   }};
   color: ${props => props.theme.colors.text};
   display: flex;

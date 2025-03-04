@@ -107,7 +107,7 @@ const Keyboard60: React.FC<Keyboard60Props> = ({ onKeyPress, onReset }) => {
         <KeyboardInner>
           {/* Number Row */}
           <KeyRow>
-            <Key {...createKeyProps('`', '`', '~')} />
+            <Key {...createKeyProps('ESC', 'ESC', '~', true)} />
             <Key {...createKeyProps('1', '1', '!')} />
             <Key {...createKeyProps('2', '2', '@')} />
             <Key {...createKeyProps('3', '3', '#')} />
@@ -160,7 +160,7 @@ const Keyboard60: React.FC<Keyboard60Props> = ({ onKeyPress, onReset }) => {
 
           {/* Bottom Alpha Row */}
           <KeyRow>
-            <Key {...createKeyProps('Shift', 'L-Shift', undefined, true)} size="2.25u" />
+            <Key {...createKeyProps('Shift', 'L-Shift', undefined, true)} size="2.35u" />
             <Key {...createKeyProps('Z', 'Z')} />
             <Key {...createKeyProps('X', 'X')} />
             <Key {...createKeyProps('C', 'C')} />
@@ -176,11 +176,12 @@ const Keyboard60: React.FC<Keyboard60Props> = ({ onKeyPress, onReset }) => {
 
           {/* Bottom Row */}
           <BottomKeyRow>
-            <Key {...createKeyProps('Ctrl', 'L-Ctrl', undefined, true)} size="1.25u" />
-            <Key {...createKeyProps('Win', 'Win', undefined, true)} size="1.25u" />
-            <Key {...createKeyProps('Alt', 'L-Alt', undefined, true)} size="1.25u" />
-            <Key {...createKeyProps('Space', 'Space', undefined, true)} size="6.25u" />
+            <Key {...createKeyProps('Ctrl', 'L-Ctrl', undefined, true)} size="1.35u" />
+            <Key {...createKeyProps('Win', 'Win', undefined, true)} size="1.35u" />
+            <Key {...createKeyProps('Alt', 'L-Alt', undefined, true)} size="1.35u" />
+            <Key {...createKeyProps('Space', 'Space', undefined, false)} size="6.55u" />
             <Key {...createKeyProps('Alt', 'R-Alt', undefined, true)} size="1.25u" />
+            <Key {...createKeyProps('Win', 'R-Win', undefined, true)} size="1.25u" />
             <Key {...createKeyProps('Fn', 'Fn', undefined, true)} size="1.25u" />
             <Key {...createKeyProps('Ctrl', 'R-Ctrl', undefined, true)} size="1.25u" />
           </BottomKeyRow>

@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { GitHub, KeyboardArrowDown, OpenInNew } from '@mui/icons-material';
+import KeyboardsDropdown from './KeyboardsDropdown';
 
 const Nav = styled.nav`
   background-color: ${props => props.theme.colors.glass};
@@ -110,6 +111,8 @@ const Navbar: React.FC = () => {
             </DropdownLink>
           </DropdownContent>
         </DropdownContainer>
+        
+        <KeyboardsDropdown />
       </LeftSection>
 
       <GitHubLink 

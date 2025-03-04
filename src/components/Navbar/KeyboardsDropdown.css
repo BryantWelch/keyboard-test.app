@@ -1,0 +1,16 @@
+.dropdown-item {
+  position: relative;
+  padding-right: 36px !important;
+}
+
+.arrow-icon {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: transform 0.2s ease;
+}
+
+.dropdown-item:hover .arrow-icon {
+  transform: translateY(-50%) scaleX(-1);
+}

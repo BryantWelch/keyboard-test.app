@@ -146,9 +146,9 @@ const TestContainer: React.FC<TestContainerProps> = ({ onKeyPress, onReset }) =>
   const [activeTab, setActiveTab] = useState('keyTest');
   const [direction, setDirection] = useState(0);
   const [currentLayout, setCurrentLayout] = useState<KeyboardType>('75%');
+  const [keyboardKey, setKeyboardKey] = useState(0);
 
   const handleTabClick = (tabId: string) => {
-    // Set animation direction based on tab order
     const tabOrder = ['keyTest', 'rolloverTest', 'typingTest', 'layout', 'themes', 'language'];
     const currentIndex = tabOrder.indexOf(activeTab);
     const newIndex = tabOrder.indexOf(tabId);
@@ -159,14 +159,26 @@ const TestContainer: React.FC<TestContainerProps> = ({ onKeyPress, onReset }) =>
   
   const handleLayoutChange = (layout: KeyboardType) => {
     setCurrentLayout(layout);
-    // Navigate back to the key test tab
     setActiveTab('keyTest');
+  };
+
+  const handleReset = () => {
+    if (onReset) {
+      onReset();
+    }
+    
+    setKeyboardKey(prevKey => prevKey + 1);
   };
   
   const getCurrentContent = () => {
     switch (activeTab) {
       case 'keyTest':
-        return <KeyboardSelector onKeyPress={onKeyPress} onReset={onReset} initialLayout={currentLayout} />;
+        return <KeyboardSelector 
+                 key={keyboardKey} 
+                 onKeyPress={onKeyPress} 
+                 onReset={onReset} 
+                 initialLayout={currentLayout} 
+               />;
       case 'rolloverTest':
         return <div>Rollover Test Content</div>;
       case 'typingTest':
@@ -202,24 +214,24 @@ const TestContainer: React.FC<TestContainerProps> = ({ onKeyPress, onReset }) =>
                 onClick={() => handleLayoutChange('TKL')}
               >
                 <h4>TKL Layout</h4>
-                <p>Tenkeyless layout with function row and navigation cluster, no numpad</p>
+                <p>Tenkeyless layout with everything except the numpad</p>
               </LayoutCard>
               <LayoutCard 
                 active={currentLayout === 'Full'} 
                 onClick={() => handleLayoutChange('Full')}
               >
                 <h4>Full Layout</h4>
-                <p>Complete keyboard with numpad, navigation cluster, and function row</p>
+                <p>Complete keyboard with numpad and all keys</p>
               </LayoutCard>
             </LayoutGrid>
           </LayoutPreview>
         );
       case 'themes':
-        return <div>Theme Settings</div>;
+        return <div>Themes Content</div>;
       case 'language':
-        return <div>Language Settings</div>;
+        return <div>Language Content</div>;
       default:
-        return <div>Select a test type</div>;
+        return <div>Select a tab</div>;
     }
   };
   
@@ -303,7 +315,7 @@ const TestContainer: React.FC<TestContainerProps> = ({ onKeyPress, onReset }) =>
         <ResetButton 
           as={motion.button}
           active={false}
-          onClick={onReset}
+          onClick={handleReset}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >

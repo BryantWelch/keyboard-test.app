@@ -18,8 +18,11 @@ export const useKeyboardEvents = (
   const [pressedKeys, setPressedKeys] = useState<Set<string>>(new Set());
 
   const handleReset = useCallback(() => {
+    // Create new empty sets to ensure complete reset
     setTestedKeys(new Set());
     setPressedKeys(new Set());
+    
+    // Call the parent onReset callback if provided
     onReset?.();
   }, [onReset]);
 
