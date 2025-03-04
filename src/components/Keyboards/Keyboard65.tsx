@@ -134,7 +134,7 @@ const Keyboard65: React.FC<Keyboard65Props> = ({ onKeyPress, onReset }) => {
             <Key {...createKeyProps('P', 'KeyP')} />
             <Key {...createKeyProps('[', 'BracketLeft', '{')} />
             <Key {...createKeyProps(']', 'BracketRight', '}')} />
-            <Key {...createKeyProps('\\', 'Backslash', '|', false)} size="1.45u" />
+            <Key {...createKeyProps('\\', 'Backslash', '|', true)} size="1.45u" />
             <Key {...createKeyProps('PgUp', 'PageUp', undefined, true)} />
           </KeyRow>
 
@@ -170,7 +170,7 @@ const Keyboard65: React.FC<Keyboard65Props> = ({ onKeyPress, onReset }) => {
             <Key {...createKeyProps('.', 'Period', '>')} />
             <Key {...createKeyProps('/', 'Slash', '?')} />
             <Key {...createKeyProps('Shift', 'ShiftRight', undefined, true)} size="1.75u" />
-            <Key {...createKeyProps('↑', 'ArrowUp', undefined, true)} />
+            <Key {...createKeyProps('↑', 'ArrowUp', undefined, false)} />
             <Key {...createKeyProps('End', 'End', undefined, true)} />
           </KeyRow>
 
@@ -183,9 +183,9 @@ const Keyboard65: React.FC<Keyboard65Props> = ({ onKeyPress, onReset }) => {
             <Key {...createKeyProps('Alt', 'AltRight', undefined, true)} size="1.15u" />
             <Key {...createKeyProps('Fn', 'Function', undefined, true)} size="1.15u" />
             <Key {...createKeyProps('Ctrl', 'ControlRight', undefined, true)} size="1.15u" />
-            <Key {...createKeyProps('←', 'ArrowLeft', undefined, true)} />
-            <Key {...createKeyProps('↓', 'ArrowDown', undefined, true)} />
-            <Key {...createKeyProps('→', 'ArrowRight', undefined, true)} />
+            <Key {...createKeyProps('←', 'ArrowLeft', undefined, false)} />
+            <Key {...createKeyProps('↓', 'ArrowDown', undefined, false)} />
+            <Key {...createKeyProps('→', 'ArrowRight', undefined, false)} />
           </KeyRow>
         </KeyboardInner>
       </KeyboardFrame>
