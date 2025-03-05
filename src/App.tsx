@@ -28,6 +28,7 @@ const MainContent = styled.main`
 
 const App: React.FC = () => {
   const [keyHistory, setKeyHistory] = useState<string[]>([]);
+  const [activeTab, setActiveTab] = useState('keyTest');
   
   const handleKeyPress = useCallback((key: string) => {
     setKeyHistory(prev => [...prev, key]);
@@ -37,14 +38,24 @@ const App: React.FC = () => {
     setKeyHistory([]);
   }, []);
 
+  const handleTabChange = useCallback((tabId: string) => {
+    setActiveTab(tabId);
+    // Clear key history when switching tabs
+    setKeyHistory([]);
+  }, []);
+
   return (
     <ThemeProvider theme={theme}>
       <AppWrapper>
         <Navbar />
         <MainContent>
           <Header />
-          <TestContainer onKeyPress={handleKeyPress} onReset={handleReset} />
-          <KeyHistory keys={keyHistory} />
+          <TestContainer 
+            onKeyPress={handleKeyPress} 
+            onReset={handleReset} 
+            onTabChange={handleTabChange}
+          />
+          {activeTab === 'keyTest' && <KeyHistory keys={keyHistory} />}
         </MainContent>
         <Footer />
       </AppWrapper>

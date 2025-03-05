@@ -3,10 +3,12 @@ import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { KeyboardSelector, KeyboardType } from '../Keyboards';
 import { KeyboardLayoutType } from '../Keyboards/keyboardTypes';
+import RolloverTest from '../RolloverTest/RolloverTest';
 
 interface TestContainerProps {
   onKeyPress?: (key: string) => void;
   onReset?: () => void;
+  onTabChange?: (tabId: string) => void;
 }
 
 const Container = styled.div`
@@ -143,7 +145,7 @@ interface TabData {
   onClick: () => void;
 }
 
-const TestContainer: React.FC<TestContainerProps> = ({ onKeyPress, onReset }) => {
+const TestContainer: React.FC<TestContainerProps> = ({ onKeyPress, onReset, onTabChange }) => {
   const [activeTab, setActiveTab] = useState('keyTest');
   const [direction, setDirection] = useState(0);
   const [currentLayout, setCurrentLayout] = useState<KeyboardType>('75%');
@@ -157,6 +159,11 @@ const TestContainer: React.FC<TestContainerProps> = ({ onKeyPress, onReset }) =>
     setDirection(newIndex > currentIndex ? 1 : -1);
     
     setActiveTab(tabId);
+    
+    // Call the onTabChange callback if provided
+    if (onTabChange) {
+      onTabChange(tabId);
+    }
   };
   
   const handleLayoutChange = (layout: KeyboardType) => {
@@ -176,6 +183,9 @@ const TestContainer: React.FC<TestContainerProps> = ({ onKeyPress, onReset }) =>
       onReset();
     }
     
+    // Dispatch a custom event for the RolloverTest component
+    window.dispatchEvent(new CustomEvent('rollover-test-reset'));
+    
     setKeyboardKey(prevKey => prevKey + 1);
   };
   
@@ -190,7 +200,11 @@ const TestContainer: React.FC<TestContainerProps> = ({ onKeyPress, onReset }) =>
                  keyboardType={currentType}
                />;
       case 'rolloverTest':
-        return <div>Rollover Test Content</div>;
+        return <RolloverTest 
+                 onKeyDown={onKeyPress} 
+                 onKeyUp={() => {}} 
+                 onReset={onReset}
+               />;
       case 'typingTest':
         return <div>Typing Test Content</div>;
       case 'layout':
