@@ -10,6 +10,7 @@ import Navbar from './components/Navbar/Navbar';
 import Header from './components/Header/Header';
 import TestContainer from './components/TestContainer/TestContainer';
 import KeyHistory from './components/KeyHistory/KeyHistory';
+import InfoSection from './components/InfoSection/InfoSection';
 import Footer from './components/Footer/Footer';
 
 const AppWrapper = styled.div`
@@ -45,7 +46,7 @@ const App: React.FC = () => {
   }, []);
 
   // Check if we're in a keyboard test-related tab (keyTest, layout, or type)
-  const isKeyboardRelatedTab = activeTab === 'keyTest' || activeTab === 'layout' || activeTab === 'type';
+  const isKeyboardRelatedTab = ['keyTest', 'layout', 'type'].includes(activeTab);
 
   return (
     <ThemeProvider theme={theme}>
@@ -59,6 +60,7 @@ const App: React.FC = () => {
             onTabChange={handleTabChange}
           />
           {isKeyboardRelatedTab && <KeyHistory keys={keyHistory} />}
+          <InfoSection activeTab={activeTab} />
         </MainContent>
         <Footer />
       </AppWrapper>
