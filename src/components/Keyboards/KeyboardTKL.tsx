@@ -3,10 +3,12 @@ import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import Key, { KeySize } from './Key';
 import { useKeyboardEvents } from './useKeyboardEvents';
+import { KeyboardLayoutType } from './keyboardTypes';
 
 interface KeyboardTKLProps {
   onKeyPress?: (key: string) => void;
   onReset?: () => void;
+  keyboardType?: KeyboardLayoutType;
 }
 
 const KeyboardContainer = styled(motion.div)`
@@ -85,7 +87,7 @@ const layoutVariants = {
   },
 };
 
-const KeyboardTKL: React.FC<KeyboardTKLProps> = ({ onKeyPress, onReset }) => {
+const KeyboardTKL: React.FC<KeyboardTKLProps> = ({ onKeyPress, onReset, keyboardType }) => {
   const [{ testedKeys, pressedKeys }, { handleKeyPress }] = useKeyboardEvents(onKeyPress, onReset);
 
   // Helper function to create key props
@@ -96,6 +98,7 @@ const KeyboardTKL: React.FC<KeyboardTKLProps> = ({ onKeyPress, onReset }) => {
       isTested: testedKeys.has(keyName),
       isPressed: pressedKeys.has(keyName),
       isSpecialKey: isSpecial,
+      keyboardType,
     };
 
     // Only add size if a width is provided, and map it to a valid KeySize

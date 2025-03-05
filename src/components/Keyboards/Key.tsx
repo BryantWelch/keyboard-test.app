@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { Microsoft } from '@mui/icons-material';
+import { KeyboardLayoutType, getKeyMapping } from './keyboardTypes';
 
 export type KeySize = 
   | '1u' | '1.05u' | '1.1u' | '1.15u' | '1.2u' | '1.25u' | '1.3u' | '1.35u' | '1.4u' | '1.45u' 
@@ -25,6 +26,7 @@ export interface KeyLabel {
 
 export interface KeyProps {
   label: KeyLabel;
+  keyboardType?: KeyboardLayoutType;
   size?: KeySize;
   isPressed?: boolean;
   isTested?: boolean;
@@ -143,6 +145,7 @@ const WindowsIcon = styled(Microsoft)`
 
 const Key: React.FC<KeyProps> = ({
   label,
+  keyboardType = 'qwerty',
   size = '1u',
   isPressed = false,
   isTested = false,
@@ -152,6 +155,9 @@ const Key: React.FC<KeyProps> = ({
 }) => {
   const width = KEY_UNIT * sizeMap[size];
   const isWindowsKey = label.primary === 'Win';
+  
+  // Get the mapped label based on keyboard type
+  const mappedLabel = isSpecialKey ? label : getKeyMapping(keyboardType, label.primary, label);
 
   return (
     <KeyContainer
@@ -181,8 +187,8 @@ const Key: React.FC<KeyProps> = ({
             <WindowsIcon />
           ) : (
             <>
-              {label.secondary && <SecondaryText>{label.secondary}</SecondaryText>}
-              <PrimaryText>{label.primary}</PrimaryText>
+              {mappedLabel.secondary && <SecondaryText>{mappedLabel.secondary}</SecondaryText>}
+              <PrimaryText>{mappedLabel.primary}</PrimaryText>
             </>
           )}
         </KeyText>

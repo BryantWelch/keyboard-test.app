@@ -7,3 +7,4 @@ export { default as KeyboardFull } from './KeyboardFull';
 export { default as KeyboardSelector } from './KeyboardSelector';
 export { useKeyboardEvents } from './useKeyboardEvents';
 export type { KeyboardType } from './KeyboardSelector';
+export type { KeyboardLayoutType } from './keyboardTypes';

@@ -3,10 +3,12 @@ import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import Key from './Key';
 import { useKeyboardEvents } from './useKeyboardEvents';
+import { KeyboardLayoutType } from './keyboardTypes';
 
 interface Keyboard60Props {
   onKeyPress?: (key: string) => void;
   onReset?: () => void;
+  keyboardType?: KeyboardLayoutType;
 }
 
 // Styled components for the keyboard
@@ -83,13 +85,14 @@ const layoutVariants = {
   },
 };
 
-const Keyboard60: React.FC<Keyboard60Props> = ({ onKeyPress, onReset }) => {
+const Keyboard60: React.FC<Keyboard60Props> = ({ onKeyPress, onReset, keyboardType = 'qwerty' }) => {
   // Use the keyboard events hook to handle key presses
   const [{ testedKeys, pressedKeys }, { handleKeyPress }] = useKeyboardEvents(onKeyPress, onReset);
 
   // Helper function to create key props
   const createKeyProps = (displayName: string, keyName: string, secondary?: string, isSpecial: boolean = false) => ({
     label: { primary: displayName, secondary },
+    keyboardType,
     onKeyPress: () => handleKeyPress(keyName),
     isTested: testedKeys.has(keyName),
     isPressed: pressedKeys.has(keyName),

@@ -3,10 +3,12 @@ import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import Key, { KeySize } from './Key';
 import { useKeyboardEvents } from './useKeyboardEvents';
+import { KeyboardLayoutType } from './keyboardTypes';
 
 interface Keyboard65Props {
   onKeyPress?: (key: string) => void;
   onReset?: () => void;
+  keyboardType?: KeyboardLayoutType;
 }
 
 // Styled components for the keyboard
@@ -79,7 +81,7 @@ const layoutVariants = {
   },
 };
 
-const Keyboard65: React.FC<Keyboard65Props> = ({ onKeyPress, onReset }) => {
+const Keyboard65: React.FC<Keyboard65Props> = ({ onKeyPress, onReset, keyboardType }) => {
   const [{ testedKeys, pressedKeys }, { handleKeyPress }] = useKeyboardEvents(onKeyPress, onReset);
 
   // Helper function to create key props
@@ -89,6 +91,7 @@ const Keyboard65: React.FC<Keyboard65Props> = ({ onKeyPress, onReset }) => {
     isTested: testedKeys.has(keyName),
     isPressed: pressedKeys.has(keyName),
     isSpecialKey: isSpecial,
+    keyboardType,
   });
 
   return (

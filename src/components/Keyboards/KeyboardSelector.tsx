@@ -6,6 +6,7 @@ import Keyboard65 from './Keyboard65';
 import Keyboard75 from './Keyboard75';
 import KeyboardTKL from './KeyboardTKL';
 import KeyboardFull from './KeyboardFull';
+import { KeyboardLayoutType } from './keyboardTypes';
 
 // We'll add more keyboard layouts as they're implemented
 export type KeyboardType = '60%' | '65%' | '75%' | 'TKL' | 'Full';
@@ -14,6 +15,7 @@ interface KeyboardSelectorProps {
   onKeyPress?: (key: string) => void;
   onReset?: () => void;
   initialLayout?: KeyboardType;
+  keyboardType?: KeyboardLayoutType;
 }
 
 const Container = styled.div`
@@ -53,7 +55,8 @@ const containerVariants = {
 const KeyboardSelector: React.FC<KeyboardSelectorProps> = ({ 
   onKeyPress, 
   onReset,
-  initialLayout = '75%' 
+  initialLayout = '75%',
+  keyboardType = 'qwerty'
 }) => {
   const [currentLayout, setCurrentLayout] = useState<KeyboardType>(initialLayout);
   const [direction, setDirection] = useState<number>(0);
@@ -75,17 +78,17 @@ const KeyboardSelector: React.FC<KeyboardSelectorProps> = ({
   const renderKeyboard = () => {
     switch (currentLayout) {
       case '60%':
-        return <Keyboard60 onKeyPress={onKeyPress} onReset={onReset} />;
+        return <Keyboard60 onKeyPress={onKeyPress} onReset={onReset} keyboardType={keyboardType} />;
       case '65%':
-        return <Keyboard65 onKeyPress={onKeyPress} onReset={onReset} />;
+        return <Keyboard65 onKeyPress={onKeyPress} onReset={onReset} keyboardType={keyboardType} />;
       case '75%':
-        return <Keyboard75 onKeyPress={onKeyPress} onReset={onReset} />;
+        return <Keyboard75 onKeyPress={onKeyPress} onReset={onReset} keyboardType={keyboardType} />;
       case 'TKL':
-        return <KeyboardTKL onKeyPress={onKeyPress} onReset={onReset} />;
+        return <KeyboardTKL onKeyPress={onKeyPress} onReset={onReset} keyboardType={keyboardType} />;
       case 'Full':
-        return <KeyboardFull onKeyPress={onKeyPress} onReset={onReset} />;
+        return <KeyboardFull onKeyPress={onKeyPress} onReset={onReset} keyboardType={keyboardType} />;
       default:
-        return <Keyboard75 onKeyPress={onKeyPress} onReset={onReset} />;
+        return <Keyboard75 onKeyPress={onKeyPress} onReset={onReset} keyboardType={keyboardType} />;
     }
   };
 

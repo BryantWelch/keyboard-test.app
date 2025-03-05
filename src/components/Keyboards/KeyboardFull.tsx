@@ -2,10 +2,12 @@ import React from 'react';
 import styled from 'styled-components';
 import Key, { KeySize } from './Key';
 import { useKeyboardEvents } from './useKeyboardEvents';
+import { KeyboardLayoutType } from './keyboardTypes';
 
 interface KeyboardFullProps {
   onKeyPress?: (key: string) => void;
   onReset?: () => void;
+  keyboardType?: KeyboardLayoutType;
 }
 
 const KeyboardContainer = styled.div`
@@ -74,7 +76,7 @@ const MainAndNumpadRow = styled.div`
   gap: 2px;
 `;
 
-const KeyboardFull: React.FC<KeyboardFullProps> = ({ onKeyPress, onReset }) => {
+const KeyboardFull: React.FC<KeyboardFullProps> = ({ onKeyPress, onReset, keyboardType }) => {
   const [{ testedKeys, pressedKeys }, { handleKeyPress }] = useKeyboardEvents(onKeyPress, onReset);
 
   // Helper function to create key props
@@ -85,6 +87,7 @@ const KeyboardFull: React.FC<KeyboardFullProps> = ({ onKeyPress, onReset }) => {
       isTested: testedKeys.has(keyName),
       isPressed: pressedKeys.has(keyName),
       isSpecialKey: isSpecial,
+      keyboardType,
     };
 
     // Only add size if a width is provided, and map it to a valid KeySize

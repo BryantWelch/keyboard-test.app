@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { KeyboardSelector, KeyboardType } from '../Keyboards';
+import { KeyboardLayoutType } from '../Keyboards/keyboardTypes';
 
 interface TestContainerProps {
   onKeyPress?: (key: string) => void;
@@ -146,7 +147,7 @@ const TestContainer: React.FC<TestContainerProps> = ({ onKeyPress, onReset }) =>
   const [activeTab, setActiveTab] = useState('keyTest');
   const [direction, setDirection] = useState(0);
   const [currentLayout, setCurrentLayout] = useState<KeyboardType>('75%');
-  const [currentType, setCurrentType] = useState('qwerty');
+  const [currentType, setCurrentType] = useState<KeyboardLayoutType>('qwerty');
   const [keyboardKey, setKeyboardKey] = useState(0);
 
   const handleTabClick = (tabId: string) => {
@@ -163,10 +164,11 @@ const TestContainer: React.FC<TestContainerProps> = ({ onKeyPress, onReset }) =>
     setActiveTab('keyTest');
   };
 
-  const handleTypeChange = (type: string) => {
+  const handleTypeChange = (type: KeyboardLayoutType) => {
     setCurrentType(type);
-    // Not actually changing anything yet, just updating the state
-    console.log(`Type changed to: ${type}`);
+    setActiveTab('keyTest');
+    // Force keyboard re-render to apply the new type
+    setKeyboardKey(prevKey => prevKey + 1);
   };
 
   const handleReset = () => {
@@ -184,7 +186,8 @@ const TestContainer: React.FC<TestContainerProps> = ({ onKeyPress, onReset }) =>
                  key={keyboardKey} 
                  onKeyPress={onKeyPress} 
                  onReset={onReset} 
-                 initialLayout={currentLayout} 
+                 initialLayout={currentLayout}
+                 keyboardType={currentType}
                />;
       case 'rolloverTest':
         return <div>Rollover Test Content</div>;
