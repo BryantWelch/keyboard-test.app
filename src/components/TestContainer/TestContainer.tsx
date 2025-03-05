@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { KeyboardSelector, KeyboardType } from '../Keyboards';
 import { KeyboardLayoutType } from '../Keyboards/keyboardTypes';
 import RolloverTest from '../RolloverTest/RolloverTest';
+import TypingTest from '../TypingTest/TypingTest';
 
 interface TestContainerProps {
   onKeyPress?: (key: string) => void;
@@ -183,8 +184,9 @@ const TestContainer: React.FC<TestContainerProps> = ({ onKeyPress, onReset, onTa
       onReset();
     }
     
-    // Dispatch a custom event for the RolloverTest component
+    // Dispatch custom events for test components
     window.dispatchEvent(new CustomEvent('rollover-test-reset'));
+    window.dispatchEvent(new CustomEvent('typing-test-reset'));
     
     setKeyboardKey(prevKey => prevKey + 1);
   };
@@ -206,7 +208,7 @@ const TestContainer: React.FC<TestContainerProps> = ({ onKeyPress, onReset, onTa
                  onReset={onReset}
                />;
       case 'typingTest':
-        return <div>Typing Test Content</div>;
+        return <TypingTest onReset={onReset} />;
       case 'layout':
         return (
           <LayoutPreview>
