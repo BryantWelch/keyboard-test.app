@@ -44,6 +44,9 @@ const App: React.FC = () => {
     setKeyHistory([]);
   }, []);
 
+  // Check if we're in a keyboard test-related tab (keyTest, layout, or type)
+  const isKeyboardRelatedTab = activeTab === 'keyTest' || activeTab === 'layout' || activeTab === 'type';
+
   return (
     <ThemeProvider theme={theme}>
       <AppWrapper>
@@ -55,7 +58,7 @@ const App: React.FC = () => {
             onReset={handleReset} 
             onTabChange={handleTabChange}
           />
-          {activeTab === 'keyTest' && <KeyHistory keys={keyHistory} />}
+          {isKeyboardRelatedTab && <KeyHistory keys={keyHistory} />}
         </MainContent>
         <Footer />
       </AppWrapper>
