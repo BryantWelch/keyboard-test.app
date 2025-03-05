@@ -262,6 +262,34 @@ const TestContainer: React.FC<TestContainerProps> = ({ onKeyPress, onReset }) =>
                 <h4>Colemak</h4>
                 <p>Modern alternative to QWERTY and Dvorak with an easier learning curve</p>
               </LayoutCard>
+              <LayoutCard 
+                active={currentType === 'workman'} 
+                onClick={() => handleTypeChange('workman')}
+              >
+                <h4>Workman</h4>
+                <p>Designed to reduce finger strain by placing common keys in comfortable positions</p>
+              </LayoutCard>
+              <LayoutCard 
+                active={currentType === 'azerty'} 
+                onClick={() => handleTypeChange('azerty')}
+              >
+                <h4>AZERTY</h4>
+                <p>Standard keyboard layout used in France and some French-speaking countries</p>
+              </LayoutCard>
+              <LayoutCard 
+                active={currentType === 'qwertz'} 
+                onClick={() => handleTypeChange('qwertz')}
+              >
+                <h4>QWERTZ</h4>
+                <p>Used in Germany, Austria, and other Central European countries</p>
+              </LayoutCard>
+              <LayoutCard 
+                active={currentType === 'colemak-dh'} 
+                onClick={() => handleTypeChange('colemak-dh')}
+              >
+                <h4>Colemak-DH</h4>
+                <p>Modified version of Colemak with improved ergonomics for the D and H keys</p>
+              </LayoutCard>
             </LayoutGrid>
           </LayoutPreview>
         );
