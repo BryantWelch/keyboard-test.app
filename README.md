@@ -4,7 +4,8 @@
 
 Keyboard Test App is a modern, interactive web application designed to help users test and analyze keyboard input with precision and style. Whether you're a developer, gamer, or keyboard enthusiast, this tool provides comprehensive key press tracking, visualization, and educational information about keyboards and typing.
 
-![Keyboard Test App Preview](./docs/preview.png)
+![keyboard-test-app](https://github.com/user-attachments/assets/6431572d-df37-44dc-84b0-9410a10b8e63)
+
 
 ## 🌟 Features
 
