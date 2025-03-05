@@ -100,10 +100,8 @@ Contributions are welcome! Please check out our [Contribution Guidelines](CONTRI
 ## 📦 Upcoming Features
 
 - Additional keyboard layouts and types
-- Key press analytics
 - Theme customization options
-- Performance metrics
-- Localization support
+- Language options
 
 ## 🔒 License
 
