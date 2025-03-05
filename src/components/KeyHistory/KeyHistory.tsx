@@ -52,6 +52,14 @@ const KeyDisplay = styled(motion.div)`
   flex-shrink: 0;
 `;
 
+const PlaceholderText = styled.div`
+  color: ${props => props.theme.colors.text}80;
+  font-style: italic;
+  text-align: center;
+  width: 100%;
+  user-select: none;
+`;
+
 interface KeyHistoryProps {
   keys: string[];
   maxKeys?: number;
@@ -93,14 +101,15 @@ const KeyHistory: React.FC<KeyHistoryProps> = ({ keys, maxKeys = 15 }) => {
     }
   };
 
-  // Get the most recent keys, but in reverse order (newest first)
   const displayKeys = keys.slice(-maxKeys).reverse();
 
   return (
     <HistoryContainer>
       <AnimatePresence mode="popLayout">
         {displayKeys.length === 0 ? (
-          <span>Press any key to test</span>
+          <PlaceholderText>
+            Key History - Press keys to see your typing history displayed here
+          </PlaceholderText>
         ) : (
           displayKeys.map((key, index) => (
             <KeyDisplay
