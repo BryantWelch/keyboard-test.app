@@ -89,7 +89,7 @@ yarn start
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please check out our [Contribution Guidelines](CONTRIBUTING.md).
+Contributions are welcome!
 
 ### Ways to Contribute
 - Report bugs
