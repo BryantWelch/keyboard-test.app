@@ -36,6 +36,29 @@ const KeyboardContainer = styled(motion.div)`
   height: 100%; /* Add height to fill the container */
 `;
 
+// Add a styled component for the keyboard info header
+const KeyboardInfo = styled.div`
+  margin-bottom: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: ${props => `${props.theme.colors.primary}15`};
+  border-radius: 6px;
+  border: 1px solid ${props => `${props.theme.colors.primary}30`};
+  color: ${props => props.theme.colors.text};
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+`;
+
+const LayoutName = styled.span`
+  font-weight: 600;
+`;
+
+const TypeName = styled.span`
+  font-weight: 600;
+`;
+
 // Animation variants
 const containerVariants = {
   enter: (direction: number) => ({
@@ -50,6 +73,28 @@ const containerVariants = {
     x: direction > 0 ? '-100%' : '100%',
     opacity: 0
   })
+};
+
+// Function to format the keyboard type name for display
+const formatTypeName = (type: KeyboardLayoutType): string => {
+  switch (type) {
+    case 'qwerty':
+      return 'QWERTY';
+    case 'dvorak':
+      return 'Dvorak';
+    case 'colemak':
+      return 'Colemak';
+    case 'workman':
+      return 'Workman';
+    case 'azerty':
+      return 'AZERTY';
+    case 'qwertz':
+      return 'QWERTZ';
+    case 'colemak-dh':
+      return 'Colemak-DH';
+    default:
+      return type;
+  }
 };
 
 const KeyboardSelector: React.FC<KeyboardSelectorProps> = ({ 
@@ -94,6 +139,11 @@ const KeyboardSelector: React.FC<KeyboardSelectorProps> = ({
 
   return (
     <Container>
+      {/* Add the keyboard info header */}
+      <KeyboardInfo>
+        Current Configuration: <LayoutName>&nbsp;{currentLayout}&nbsp;</LayoutName> with <TypeName>&nbsp;{formatTypeName(keyboardType)}&nbsp;</TypeName> Layout
+      </KeyboardInfo>
+      
       <AnimatePresence custom={direction} initial={false} mode="sync">
         <KeyboardContainer
           key={currentLayout}

@@ -150,7 +150,7 @@ const KeyboardTKL: React.FC<KeyboardTKLProps> = ({ onKeyPress, onReset, keyboard
 
           {/* Row 2 */}
           <KeyRow $leftAlign={true}>
-            <Key {...createKeyProps('`', '`', '~')} />
+            <Key {...createKeyProps('`', '`', '~', true)} />
             <Key {...createKeyProps('1', '1', '!')} />
             <Key {...createKeyProps('2', '2', '@')} />
             <Key {...createKeyProps('3', '3', '#')} />
