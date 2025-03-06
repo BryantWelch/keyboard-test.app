@@ -216,8 +216,6 @@ const Footer = () => {
           >
             MIT License
           </ExternalLink>
-          {' • '}
-          <a href="/privacy">Privacy Policy</a>
         </div>
       </Copyright>
 
