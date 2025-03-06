@@ -22,6 +22,8 @@ const DropdownButton = styled.button`
   gap: 0.5rem;
   cursor: pointer;
   transition: ${props => props.theme.transitions.default};
+  font-size: 1.1rem;
+  font-weight: 500;
   
   &:hover {
     color: ${props => props.theme.colors.primary};
