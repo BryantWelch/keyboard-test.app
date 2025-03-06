@@ -210,7 +210,7 @@ const Footer = () => {
         <div>
           &copy; {currentYear} Keyboard Test App. Open source under{' '}
           <ExternalLink 
-            href="https://github.com/BryantWelch/keyboard-test.app/blob/main/LICENSE" 
+            href="https://github.com/BryantWelch/keyboard-test.app/blob/master/LICENSE" 
             target="_blank" 
             rel="noopener noreferrer"
           >
