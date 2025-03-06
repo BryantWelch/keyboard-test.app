@@ -5,6 +5,8 @@ import { KeyboardSelector, KeyboardType } from '../Keyboards';
 import { KeyboardLayoutType } from '../Keyboards/keyboardTypes';
 import RolloverTest from '../RolloverTest/RolloverTest';
 import TypingTest from '../TypingTest/TypingTest';
+import { ThemeName, themeMetadata } from '../../styles/themeTypes';
+import { useTheme } from '../../styles/ThemeContext';
 
 interface TestContainerProps {
   onKeyPress?: (key: string) => void;
@@ -120,6 +122,81 @@ const ResetButton = styled(Tab)`
   }
 `;
 
+const ThemeGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+`;
+
+const ThemeCard = styled.div<{ active: boolean }>`
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid ${props => props.active ? props.theme.colors.primary : props.theme.colors.primary + '40'};
+  background: ${props => props.active ? props.theme.colors.primary + '20' : 'transparent'};
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+  &:hover {
+    background: ${props => props.active ? props.theme.colors.primary + '30' : props.theme.colors.primary + '10'};
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+`;
+
+const ThemePreview = styled.div<{ colors: { background: string, primary: string, text: string } }>`
+  width: 100%;
+  height: 50px;
+  border-radius: 6px;
+  margin-bottom: 0.75rem;
+  background: ${props => props.colors.background};
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: ${props => props.colors.primary};
+  }
+  
+  &::after {
+    content: 'Aa';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: ${props => props.colors.text};
+    font-weight: bold;
+    font-size: 12px;
+  }
+`;
+
+const ThemeLabel = styled.h4`
+  margin: 0;
+  font-size: 0.8rem;
+  text-align: center;
+  color: ${props => props.theme.colors.text};
+`;
+
+const ThemeContainer = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
 const slideVariants = {
   enter: (direction: number) => ({
     x: direction > 0 ? 1000 : -1000,
@@ -152,9 +229,10 @@ const TestContainer: React.FC<TestContainerProps> = ({ onKeyPress, onReset, onTa
   const [currentLayout, setCurrentLayout] = useState<KeyboardType>('75%');
   const [currentType, setCurrentType] = useState<KeyboardLayoutType>('qwerty');
   const [keyboardKey, setKeyboardKey] = useState(0);
+  const { currentTheme, setTheme } = useTheme();
 
   const handleTabClick = (tabId: string) => {
-    const tabOrder = ['keyTest', 'rolloverTest', 'typingTest', 'layout', 'type', 'themes', 'language'];
+    const tabOrder = ['keyTest', 'rolloverTest', 'typingTest', 'layout', 'type', 'themes'];
     const currentIndex = tabOrder.indexOf(activeTab);
     const newIndex = tabOrder.indexOf(tabId);
     setDirection(newIndex > currentIndex ? 1 : -1);
@@ -177,6 +255,10 @@ const TestContainer: React.FC<TestContainerProps> = ({ onKeyPress, onReset, onTa
     setActiveTab('keyTest');
     // Force keyboard re-render to apply the new type
     setKeyboardKey(prevKey => prevKey + 1);
+  };
+
+  const handleThemeChange = (themeName: ThemeName) => {
+    setTheme(themeName);
   };
 
   const handleReset = () => {
@@ -310,9 +392,40 @@ const TestContainer: React.FC<TestContainerProps> = ({ onKeyPress, onReset, onTa
           </LayoutPreview>
         );
       case 'themes':
-        return <div>Themes Content</div>;
-      case 'language':
-        return <div>Language Content</div>;
+        // Get all themes including original
+        const allThemes = (Object.keys(themeMetadata) as ThemeName[]);
+        
+        // Sort themes alphabetically (excluding original)
+        const sortedThemes = [
+          'original' as ThemeName, 
+          ...allThemes
+            .filter(name => name !== 'original')
+            .sort((a, b) => themeMetadata[a].name.localeCompare(themeMetadata[b].name))
+        ];
+        
+        // Limit to 35 themes (7x5 grid)
+        const displayThemes = sortedThemes.slice(0, 35);
+
+        return (
+          <LayoutPreview>
+            <h3>Select a Theme</h3>
+            
+            <ThemeContainer>
+              <ThemeGrid>
+                {displayThemes.map((themeName: ThemeName) => (
+                  <ThemeCard 
+                    key={themeName}
+                    active={currentTheme === themeName} 
+                    onClick={() => handleThemeChange(themeName)}
+                  >
+                    <ThemePreview colors={themeMetadata[themeName].colors} />
+                    <ThemeLabel>{themeMetadata[themeName].name}</ThemeLabel>
+                  </ThemeCard>
+                ))}
+              </ThemeGrid>
+            </ThemeContainer>
+          </LayoutPreview>
+        );
       default:
         return <div>Select a tab</div>;
     }
@@ -346,11 +459,6 @@ const TestContainer: React.FC<TestContainerProps> = ({ onKeyPress, onReset, onTa
       id: 'type',
       label: 'Type',
       onClick: () => handleTabClick('type')
-    },
-    {
-      id: 'language',
-      label: 'Language',
-      onClick: () => handleTabClick('language')
     },
     {
       id: 'themes',

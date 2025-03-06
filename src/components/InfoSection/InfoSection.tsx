@@ -352,6 +352,7 @@ const InfoSection: React.FC<InfoSectionProps> = ({ activeTab }) => {
       case 'keyTest':
       case 'layout':
       case 'type':
+      case 'themes':
         return renderKeyTestInfo();
       case 'rolloverTest':
         return renderRolloverTestInfo();
@@ -363,7 +364,7 @@ const InfoSection: React.FC<InfoSectionProps> = ({ activeTab }) => {
   };
 
   // Only render if we have content for this tab
-  if (!['keyTest', 'rolloverTest', 'typingTest', 'layout', 'type'].includes(activeTab)) {
+  if (!['keyTest', 'rolloverTest', 'typingTest', 'layout', 'type', 'themes'].includes(activeTab)) {
     return null;
   }
 

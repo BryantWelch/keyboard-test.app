@@ -1,9 +1,8 @@
 import React, { useState, useCallback } from 'react';
-import { ThemeProvider } from 'styled-components';
 import styled from 'styled-components';
 
 // Theme
-import { theme } from './styles/theme';
+import { ThemeProvider } from './styles/ThemeContext';
 
 // Components
 import Navbar from './components/Navbar/Navbar';
@@ -46,10 +45,10 @@ const App: React.FC = () => {
   }, []);
 
   // Check if we're in a keyboard test-related tab (keyTest, layout, or type)
-  const isKeyboardRelatedTab = ['keyTest', 'layout', 'type'].includes(activeTab);
+  const isKeyboardRelatedTab = ['keyTest', 'layout', 'type', 'themes'].includes(activeTab);
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider>
       <AppWrapper>
         <Navbar />
         <MainContent>
