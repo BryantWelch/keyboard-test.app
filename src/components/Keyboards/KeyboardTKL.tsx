@@ -34,7 +34,7 @@ const KeyboardFrame = styled.div`
 const KeyboardInner = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 6px; /* Increased gap between rows */
+  gap: 2px; 
   padding: 12px;
   border-radius: 8px;
   background: ${props => `${props.theme.colors.primary}15`};
@@ -122,7 +122,7 @@ const KeyboardTKL: React.FC<KeyboardTKLProps> = ({ onKeyPress, onReset, keyboard
         <KeyboardInner>
           {/* Row 1 - Function Row */}
           <KeyRow $leftAlign={true}>
-            <Key {...createKeyProps('Esc', 'Esc', undefined, true)} />
+            <Key {...createKeyProps('Esc', 'Escape', undefined, true)} />
             <KeyGroup $marginLeft={54}>
               <Key {...createKeyProps('F1', 'F1', undefined, true)} />
               <Key {...createKeyProps('F2', 'F2', undefined, true)} />
@@ -150,19 +150,19 @@ const KeyboardTKL: React.FC<KeyboardTKLProps> = ({ onKeyPress, onReset, keyboard
 
           {/* Row 2 */}
           <KeyRow $leftAlign={true}>
-            <Key {...createKeyProps('`', '`', '~', true)} />
-            <Key {...createKeyProps('1', '1', '!')} />
-            <Key {...createKeyProps('2', '2', '@')} />
-            <Key {...createKeyProps('3', '3', '#')} />
-            <Key {...createKeyProps('4', '4', '$')} />
-            <Key {...createKeyProps('5', '5', '%')} />
-            <Key {...createKeyProps('6', '6', '^')} />
-            <Key {...createKeyProps('7', '7', '&')} />
-            <Key {...createKeyProps('8', '8', '*')} />
-            <Key {...createKeyProps('9', '9', '(')} />
-            <Key {...createKeyProps('0', '0', ')')} />
-            <Key {...createKeyProps('-', '-', '_')} />
-            <Key {...createKeyProps('=', '=', '+')} />
+            <Key {...createKeyProps('`', 'Backquote', '~', true)} />
+            <Key {...createKeyProps('1', 'Digit1', '!')} />
+            <Key {...createKeyProps('2', 'Digit2', '@')} />
+            <Key {...createKeyProps('3', 'Digit3', '#')} />
+            <Key {...createKeyProps('4', 'Digit4', '$')} />
+            <Key {...createKeyProps('5', 'Digit5', '%')} />
+            <Key {...createKeyProps('6', 'Digit6', '^')} />
+            <Key {...createKeyProps('7', 'Digit7', '&')} />
+            <Key {...createKeyProps('8', 'Digit8', '*')} />
+            <Key {...createKeyProps('9', 'Digit9', '(')} />
+            <Key {...createKeyProps('0', 'Digit0', ')')} />
+            <Key {...createKeyProps('-', 'Minus', '_')} />
+            <Key {...createKeyProps('=', 'Equal', '+')} />
             <Key {...createKeyProps('Backspace', 'Backspace', undefined, true, 2)} />
             <KeyGroup $marginLeft={20}>
               <Key {...createKeyProps('Insert', 'Insert', undefined, true)} />
@@ -174,19 +174,19 @@ const KeyboardTKL: React.FC<KeyboardTKLProps> = ({ onKeyPress, onReset, keyboard
           {/* Row 3 */}
           <KeyRow $leftAlign={true}>
             <Key {...createKeyProps('Tab', 'Tab', undefined, true, 1.5)} />
-            <Key {...createKeyProps('Q', 'Q')} />
-            <Key {...createKeyProps('W', 'W')} />
-            <Key {...createKeyProps('E', 'E')} />
-            <Key {...createKeyProps('R', 'R')} />
-            <Key {...createKeyProps('T', 'T')} />
-            <Key {...createKeyProps('Y', 'Y')} />
-            <Key {...createKeyProps('U', 'U')} />
-            <Key {...createKeyProps('I', 'I')} />
-            <Key {...createKeyProps('O', 'O')} />
-            <Key {...createKeyProps('P', 'P')} />
-            <Key {...createKeyProps('[', '[', '{')} />
-            <Key {...createKeyProps(']', ']', '}')} />
-            <Key {...createKeyProps('\\', '\\', '|', true, 1.5)} />
+            <Key {...createKeyProps('Q', 'KeyQ')} />
+            <Key {...createKeyProps('W', 'KeyW')} />
+            <Key {...createKeyProps('E', 'KeyE')} />
+            <Key {...createKeyProps('R', 'KeyR')} />
+            <Key {...createKeyProps('T', 'KeyT')} />
+            <Key {...createKeyProps('Y', 'KeyY')} />
+            <Key {...createKeyProps('U', 'KeyU')} />
+            <Key {...createKeyProps('I', 'KeyI')} />
+            <Key {...createKeyProps('O', 'KeyO')} />
+            <Key {...createKeyProps('P', 'KeyP')} />
+            <Key {...createKeyProps('[', 'BracketLeft', '{')} />
+            <Key {...createKeyProps(']', 'BracketRight', '}')} />
+            <Key {...createKeyProps('\\', 'Backslash', '|', true, 1.5)} />
             <KeyGroup $marginLeft={20}>
               <Key {...createKeyProps('Delete', 'Delete', undefined, true)} />
               <Key {...createKeyProps('End', 'End', undefined, true)} />
@@ -196,54 +196,54 @@ const KeyboardTKL: React.FC<KeyboardTKLProps> = ({ onKeyPress, onReset, keyboard
 
           {/* Row 4 */}
           <KeyRow $leftAlign={true}>
-            <Key {...createKeyProps('Caps', 'Caps Lock', undefined, true, 1.75)} />
-            <Key {...createKeyProps('A', 'A')} />
-            <Key {...createKeyProps('S', 'S')} />
-            <Key {...createKeyProps('D', 'D')} />
-            <Key {...createKeyProps('F', 'F')} />
-            <Key {...createKeyProps('G', 'G')} />
-            <Key {...createKeyProps('H', 'H')} />
-            <Key {...createKeyProps('J', 'J')} />
-            <Key {...createKeyProps('K', 'K')} />
-            <Key {...createKeyProps('L', 'L')} />
-            <Key {...createKeyProps(';', ';', ':')} />
-            <Key {...createKeyProps('\'', "'", '"')} />
+            <Key {...createKeyProps('Caps', 'CapsLock', undefined, true, 1.75)} />
+            <Key {...createKeyProps('A', 'KeyA')} />
+            <Key {...createKeyProps('S', 'KeyS')} />
+            <Key {...createKeyProps('D', 'KeyD')} />
+            <Key {...createKeyProps('F', 'KeyF')} />
+            <Key {...createKeyProps('G', 'KeyG')} />
+            <Key {...createKeyProps('H', 'KeyH')} />
+            <Key {...createKeyProps('J', 'KeyJ')} />
+            <Key {...createKeyProps('K', 'KeyK')} />
+            <Key {...createKeyProps('L', 'KeyL')} />
+            <Key {...createKeyProps(';', 'Semicolon', ':')} />
+            <Key {...createKeyProps('\'', 'Quote', '"')} />
             <Key {...createKeyProps('Enter', 'Enter', undefined, true, 2.3)} />
           </KeyRow>
 
           {/* Row 5 */}
           <KeyRow $leftAlign={true}>
-            <Key {...createKeyProps('Shift', 'L-Shift', undefined, true, 2.25)} />
-            <Key {...createKeyProps('Z', 'Z')} />
-            <Key {...createKeyProps('X', 'X')} />
-            <Key {...createKeyProps('C', 'C')} />
-            <Key {...createKeyProps('V', 'V')} />
-            <Key {...createKeyProps('B', 'B')} />
-            <Key {...createKeyProps('N', 'N')} />
-            <Key {...createKeyProps('M', 'M')} />
-            <Key {...createKeyProps(',', ',', '<')} />
-            <Key {...createKeyProps('.', '.', '>')} />
-            <Key {...createKeyProps('/', '/', '?')} />
-            <Key {...createKeyProps('Shift', 'R-Shift', undefined, true, 2.85)} />
+            <Key {...createKeyProps('Shift', 'ShiftLeft', undefined, true, 2.25)} />
+            <Key {...createKeyProps('Z', 'KeyZ')} />
+            <Key {...createKeyProps('X', 'KeyX')} />
+            <Key {...createKeyProps('C', 'KeyC')} />
+            <Key {...createKeyProps('V', 'KeyV')} />
+            <Key {...createKeyProps('B', 'KeyB')} />
+            <Key {...createKeyProps('N', 'KeyN')} />
+            <Key {...createKeyProps('M', 'KeyM')} />
+            <Key {...createKeyProps(',', 'Comma', '<')} />
+            <Key {...createKeyProps('.', 'Period', '>')} />
+            <Key {...createKeyProps('/', 'Slash', '?')} />
+            <Key {...createKeyProps('Shift', 'ShiftRight', undefined, true, 2.85)} />
             <KeyGroup $marginLeft={82}>
-              <Key {...createKeyProps('↑', '↑', undefined, false)} />
+              <Key {...createKeyProps('↑', 'ArrowUp', undefined, false)} />
             </KeyGroup>
           </KeyRow>
 
           {/* Row 6 */}
           <KeyRow $leftAlign={true}>
-            <Key {...createKeyProps('Ctrl', 'L-Ctrl', undefined, true, 1.25)} />
-            <Key {...createKeyProps('Win', 'Win', undefined, true, 1.25)} />
-            <Key {...createKeyProps('Alt', 'L-Alt', undefined, true, 1.25)} />
+            <Key {...createKeyProps('Ctrl', 'ControlLeft', undefined, true, 1.25)} />
+            <Key {...createKeyProps('Win', 'MetaLeft', undefined, true, 1.25)} />
+            <Key {...createKeyProps('Alt', 'AltLeft', undefined, true, 1.25)} />
             <Key {...createKeyProps('Space', 'Space', undefined, false, 6.75)} />
-            <Key {...createKeyProps('Alt', 'R-Alt', undefined, true, 1.25)} />
-            <Key {...createKeyProps('Win', 'Win', undefined, true, 1.25)} />
+            <Key {...createKeyProps('Alt', 'AltRight', undefined, true, 1.25)} />
+            <Key {...createKeyProps('Win', 'MetaRight', undefined, true, 1.25)} />
             <Key {...createKeyProps('Menu', 'ContextMenu', undefined, true, 1.25)} />
-            <Key {...createKeyProps('Ctrl', 'R-Ctrl', undefined, true, 1.25)} />
+            <Key {...createKeyProps('Ctrl', 'ControlRight', undefined, true, 1.25)} />
             <KeyGroup $marginLeft={30}>
-              <Key {...createKeyProps('←', '←', undefined, false)} />
-              <Key {...createKeyProps('↓', '↓', undefined, false)} />
-              <Key {...createKeyProps('→', '→', undefined, false)} />
+              <Key {...createKeyProps('←', 'ArrowLeft', undefined, false)} />
+              <Key {...createKeyProps('↓', 'ArrowDown', undefined, false)} />
+              <Key {...createKeyProps('→', 'ArrowRight', undefined, false)} />
             </KeyGroup>
           </KeyRow>
         </KeyboardInner>

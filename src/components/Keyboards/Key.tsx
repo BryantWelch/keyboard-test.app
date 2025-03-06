@@ -32,6 +32,7 @@ export interface KeyProps {
   isTested?: boolean;
   isSpecialKey?: boolean;
   className?: string;
+  style?: React.CSSProperties;
   onKeyPress?: () => void;
 }
 
@@ -151,46 +152,38 @@ const Key: React.FC<KeyProps> = ({
   isTested = false,
   isSpecialKey = false,
   className,
+  style,
   onKeyPress,
 }) => {
-  const width = KEY_UNIT * sizeMap[size];
-  const isWindowsKey = label.primary === 'Win';
+  // Get the mapped key based on keyboard type
+  const mappedLabel = keyboardType !== 'qwerty' && !isSpecialKey ? 
+    getKeyMapping(label.primary, keyboardType) : 
+    label.primary;
   
-  // Get the mapped label based on keyboard type
-  const mappedLabel = isSpecialKey ? label : getKeyMapping(keyboardType, label.primary, label);
-
+  // Calculate width based on size
+  const width = sizeMap[size] * KEY_UNIT;
+  
+  // Handle special cases for key display
+  const displayLabel = mappedLabel === 'Meta' ? <WindowsIcon /> : mappedLabel;
+  
   return (
-    <KeyContainer
+    <KeyContainer 
       $width={width}
       className={className}
+      style={style}
       onClick={onKeyPress}
-      whileHover={{ y: -1 }}
-      whileTap={{ y: 1 }}
+      whileTap={{ scale: 0.95 }}
+      transition={{ type: 'spring', stiffness: 500, damping: 30 }}
     >
       <KeyCap
-        $isTested={isTested}
-        $isSpecialKey={isSpecialKey}
-        $isPressed={isPressed}
-        animate={{
-          scale: isPressed ? 0.95 : 1,
-          y: isPressed ? 2 : 0,
-        }}
-        transition={{ 
-          type: "spring", 
-          stiffness: 500, 
-          damping: 30,
-          mass: 0.5
-        }}
+        $isTested={!!isTested}
+        $isSpecialKey={!!isSpecialKey}
+        $isPressed={!!isPressed}
+        style={{ height: '100%' }}
       >
-        <KeyText $isPressed={isPressed}>
-          {isWindowsKey ? (
-            <WindowsIcon />
-          ) : (
-            <>
-              {mappedLabel.secondary && <SecondaryText>{mappedLabel.secondary}</SecondaryText>}
-              <PrimaryText>{mappedLabel.primary}</PrimaryText>
-            </>
-          )}
+        <KeyText $isPressed={!!isPressed}>
+          <PrimaryText>{displayLabel}</PrimaryText>
+          {label.secondary && <SecondaryText>{label.secondary}</SecondaryText>}
         </KeyText>
       </KeyCap>
     </KeyContainer>

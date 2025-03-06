@@ -230,7 +230,7 @@ const RolloverTest: React.FC<RolloverTestProps> = ({ onKeyDown, onKeyUp, onReset
       </InstructionText>
       
       <KeysContainer>
-        <AnimatePresence mode="sync">
+        <AnimatePresence mode="popLayout">
           {pressedKeysArray.length === 0 ? (
             <PlaceholderText>
               Rollover Test - Press and hold multiple keys to see how many can be recognized simultaneously

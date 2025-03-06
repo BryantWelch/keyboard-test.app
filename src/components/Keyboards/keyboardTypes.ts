@@ -255,22 +255,37 @@ export const colemakDHMapping: KeyboardTypeMapping = {
 };
 
 // Function to get the appropriate mapping based on the keyboard type
-export const getKeyMapping = (type: KeyboardLayoutType, key: string, defaultMapping: KeyMapping): KeyMapping => {
+export function getKeyMapping(key: string, type: KeyboardLayoutType): string {
+  // If the type is qwerty, just return the original key
+  if (type === 'qwerty') {
+    return key;
+  }
+
+  // Get the appropriate mapping based on keyboard type
+  let mapping: KeyboardTypeMapping;
   switch (type) {
     case 'dvorak':
-      return dvorakMapping[key] || defaultMapping;
+      mapping = dvorakMapping;
+      break;
     case 'colemak':
-      return colemakMapping[key] || defaultMapping;
+      mapping = colemakMapping;
+      break;
     case 'workman':
-      return workmanMapping[key] || defaultMapping;
+      mapping = workmanMapping;
+      break;
     case 'azerty':
-      return azertyMapping[key] || defaultMapping;
+      mapping = azertyMapping;
+      break;
     case 'qwertz':
-      return qwertzMapping[key] || defaultMapping;
+      mapping = qwertzMapping;
+      break;
     case 'colemak-dh':
-      return colemakDHMapping[key] || defaultMapping;
-    case 'qwerty':
+      mapping = colemakDHMapping;
+      break;
     default:
-      return defaultMapping;
+      return key; // Return original key if no mapping is found
   }
-};
+
+  // Return the mapped key if it exists, otherwise return the original key
+  return mapping[key]?.primary || key;
+}
