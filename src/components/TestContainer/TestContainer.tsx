@@ -348,14 +348,14 @@ const TestContainer: React.FC<TestContainerProps> = ({ onKeyPress, onReset, onTa
       onClick: () => handleTabClick('type')
     },
     {
-      id: 'themes',
-      label: 'Themes',
-      onClick: () => handleTabClick('themes')
-    },
-    {
       id: 'language',
       label: 'Language',
       onClick: () => handleTabClick('language')
+    },
+    {
+      id: 'themes',
+      label: 'Themes',
+      onClick: () => handleTabClick('themes')
     }
   ];
 
