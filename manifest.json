@@ -1,6 +1,6 @@
 {
   "short_name": "Keyboard Test",
-  "name": "Keyboard Test - Compare Keyboard Layouts",
+  "name": "Keyboard Test - Interactive Keyboard Testing Tool",
   "icons": [
     {
       "src": "favicon.ico",
@@ -22,5 +22,5 @@
   "display": "standalone",
   "theme_color": "#000000",
   "background_color": "#ffffff",
-  "description": "Test and compare different keyboard layouts including QWERTY, Dvorak, and Colemak."
+  "description": "Interactive keyboard testing application for comparing different keyboard layouts (QWERTY, Dvorak, Colemak) and sizes (60%, 65%, 75%, TKL, Full). Perform key rollover tests, typing tests, and visualize keystrokes."
 }
