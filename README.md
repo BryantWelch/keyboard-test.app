@@ -9,15 +9,10 @@ Keyboard Test App is a modern, interactive web application designed to help user
 
 ## 🌟 Features
 
-- **Real-time Key Press Tracking**
-  - Instantly visualize key presses
-  - Detect left and right variants of modifier keys
-  - Clear, intuitive key history display
-
 - **Multiple Test Types**
-  - Key Test: Test individual keys and see their response
-  - Rollover Test: Test how many simultaneous keypresses your keyboard can register
-  - Typing Test: Measure your typing speed and accuracy
+  - **Key Test**: Test individual keys to verify their response, helping you identify any faulty or non-functional keys.
+  - **Rollover Test**: Test how many simultaneous keypresses your keyboard can register, helping you identify potential issues with key ghosting or unregistered keys.
+  - **Typing Test**: Measure your typing speed and accuracy with this typing test. You can adjust the test mode from Word Count to Timed. 
 
 - **Comprehensive Keyboard Layout Options**
   - 60% Layout: Compact design without function row, navigation cluster, or numpad
@@ -47,6 +42,11 @@ Keyboard Test App is a modern, interactive web application designed to help user
   - Adaptive layout for different screen sizes
   - Modern, clean user interface
 
+- **Real-time Key Press Tracking**
+  - Instantly visualize key presses
+  - Detect left and right variants of modifier keys
+  - Clear, intuitive key history display
+
 - **Detailed Interaction Tracking**
   - Hover and press effects
   - Reset functionality
@@ -70,15 +70,11 @@ cd keyboard-test.app
 2. Install dependencies
 ```bash
 npm install
-# or
-yarn install
 ```
 
 3. Start the development server
 ```bash
 npm start
-# or
-yarn start
 ```
 
 ## 🛠 Tech Stack
@@ -98,27 +94,15 @@ Contributions are welcome!
 - Submit pull requests
 - Improve documentation
 
-## 📦 Upcoming Features
-
-- Additional keyboard layouts and types
-- Theme customization options
-- Language options
-
-## 🔒 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 ## 💖 Support
 
 If you find this project helpful, consider supporting its development:
 
 [![Buy Me a Coffee](https://storage.ko-fi.com/cdn/kofi5.png)](https://ko-fi.com/V7V01A0SJC)
 
-## 🌐 Community
+## 🔒 License
 
-- [GitHub Discussions](https://github.com/BryantWelch/keyboard-test.app/discussions)
-- [Reddit r/MechanicalKeyboards](https://www.reddit.com/r/MechanicalKeyboards/)
-- [Keyboard Enthusiasts Discord](https://discord.gg/mechanicalkeyboards)
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
