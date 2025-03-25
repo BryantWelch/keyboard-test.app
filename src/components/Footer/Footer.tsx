@@ -158,11 +158,11 @@ const Footer = () => {
           <FooterLinks>
             <li>
               <ExternalLink href="https://www.mechanical-keyboard.org/" target="_blank" rel="noopener noreferrer">
-                Keyboard Encyclopedia
+                Mechanical-Keyboard
               </ExternalLink>
             </li>
             <li>
-              <ExternalLink href="https://www.keychron.com/pages/how-to-choose-switches" target="_blank" rel="noopener noreferrer">
+              <ExternalLink href="https://switchandclick.com/mechanical-keyboard-switch-guide/" target="_blank" rel="noopener noreferrer">
                 Switch Guide
               </ExternalLink>
             </li>
@@ -172,8 +172,8 @@ const Footer = () => {
               </ExternalLink>
             </li>
             <li>
-              <ExternalLink href="https://www.keyboardco.com/blog/" target="_blank" rel="noopener noreferrer">
-                Keyboard Blog
+              <ExternalLink href="https://keebs101.com/en/" target="_blank" rel="noopener noreferrer">
+                Keebs101
               </ExternalLink>
             </li>
           </FooterLinks>
@@ -193,13 +193,13 @@ const Footer = () => {
               </ExternalLink>
             </li>
             <li>
-              <ExternalLink href="https://deskthority.net/" target="_blank" rel="noopener noreferrer">
-                Deskthority
+              <ExternalLink href="https://deskthority.net/viewforum.php?f=2" target="_blank" rel="noopener noreferrer">
+                Deskthority Forum
               </ExternalLink>
             </li>
             <li>
-              <ExternalLink href="https://discord.gg/mechanicalkeyboards" target="_blank" rel="noopener noreferrer">
-                MechKeys Discord
+              <ExternalLink href="https://www.keebtalk.com/" target="_blank" rel="noopener noreferrer">
+                Keebtalk Forum
               </ExternalLink>
             </li>
           </FooterLinks>
