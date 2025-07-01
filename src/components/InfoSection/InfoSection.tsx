@@ -99,6 +99,110 @@ interface InfoSectionProps {
 }
 
 const InfoSection: React.FC<InfoSectionProps> = ({ activeTab }) => {
+  const renderOverviewInfo = () => (
+    <>
+      <InfoTitle>Comprehensive Keyboard Testing Platform</InfoTitle>
+      <InfoContent>
+        <SectionContent>
+          Welcome to the most comprehensive keyboard testing platform available online. Our interactive tools help you evaluate mechanical keyboards, optimize your typing technique, and find the perfect setup for your needs. Whether you're a gamer, programmer, writer, or typing enthusiast, our scientific approach to keyboard testing provides valuable insights into your typing performance.
+        </SectionContent>
+        
+        <SectionTitle>Why Test Your Keyboard?</SectionTitle>
+        <SectionContent>
+          Keyboard testing is essential for understanding your typing patterns, identifying potential issues, and optimizing your setup. A properly functioning keyboard can significantly impact your productivity, comfort, and overall computing experience. Our testing suite covers all major aspects of keyboard performance.
+        </SectionContent>
+        
+        <InfoGrid>
+          <InfoCard>
+            <h4>🎯 Key Response Testing</h4>
+            <p>Verify that every key on your keyboard registers correctly. Identify stuck keys, double-clicking issues, or keys that don't respond. Essential for gaming and professional typing.</p>
+          </InfoCard>
+          
+          <InfoCard>
+            <h4>⚡ N-Key Rollover Testing</h4>
+            <p>Test how many keys your keyboard can register simultaneously. Critical for fast typing, gaming, and keyboard shortcuts. Discover your keyboard's true capabilities.</p>
+          </InfoCard>
+          
+          <InfoCard>
+            <h4>📊 Typing Performance Analysis</h4>
+            <p>Measure your words per minute (WPM), accuracy, and consistency across different texts. Track your progress and identify areas for improvement with detailed statistics.</p>
+          </InfoCard>
+          
+          <InfoCard>
+            <h4>🎨 Layout Comparison</h4>
+            <p>Compare different keyboard layouts (60%, 65%, 75%, TKL, Full-size) and typing systems (QWERTY, Dvorak, Colemak) to find your optimal setup.</p>
+          </InfoCard>
+        </InfoGrid>
+        
+        <SectionTitle>Professional Keyboard Testing Features</SectionTitle>
+        <List>
+          <ListItem><strong>Real-time Keystroke Visualization</strong>: See exactly which keys you press and when, helping identify typing patterns and issues.</ListItem>
+          <ListItem><strong>Switch Type Analysis</strong>: Test different mechanical switch types to understand their characteristics and find your preference.</ListItem>
+          <ListItem><strong>Ergonomic Assessment</strong>: Evaluate keyboard layouts for comfort and efficiency during extended typing sessions.</ListItem>
+          <ListItem><strong>Gaming Performance Testing</strong>: Specialized tests for gaming keyboards including anti-ghosting and key rollover validation.</ListItem>
+          <ListItem><strong>Professional Compatibility</strong>: Test keyboard functionality across different operating systems and applications.</ListItem>
+        </List>
+        
+        <SectionTitle>Keyboard Layout Guide</SectionTitle>
+        <Table>
+          <thead>
+            <tr>
+              <TableHeader>Layout</TableHeader>
+              <TableHeader>Keys</TableHeader>
+              <TableHeader>Best For</TableHeader>
+              <TableHeader>Advantages</TableHeader>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <TableCell>60%</TableCell>
+              <TableCell>~61 keys</TableCell>
+              <TableCell>Minimalists, gamers</TableCell>
+              <TableCell>Compact, portable, more desk space</TableCell>
+            </tr>
+            <tr>
+              <TableCell>65%</TableCell>
+              <TableCell>~68 keys</TableCell>
+              <TableCell>Balanced usage</TableCell>
+              <TableCell>Arrow keys, compact design</TableCell>
+            </tr>
+            <tr>
+              <TableCell>75%</TableCell>
+              <TableCell>~82 keys</TableCell>
+              <TableCell>Programmers</TableCell>
+              <TableCell>Function row, compact layout</TableCell>
+            </tr>
+            <tr>
+              <TableCell>TKL</TableCell>
+              <TableCell>~87 keys</TableCell>
+              <TableCell>General use</TableCell>
+              <TableCell>No numpad, more mouse space</TableCell>
+            </tr>
+            <tr>
+              <TableCell>Full-size</TableCell>
+              <TableCell>~104 keys</TableCell>
+              <TableCell>Data entry, professionals</TableCell>
+              <TableCell>Complete functionality, dedicated numpad</TableCell>
+            </tr>
+          </tbody>
+        </Table>
+        
+        <SectionTitle>Advanced Testing Capabilities</SectionTitle>
+        <SectionContent>
+          Our platform provides enterprise-grade testing capabilities typically found in professional keyboard testing laboratories. These tools help manufacturers, reviewers, and enthusiasts evaluate keyboard performance with scientific precision.
+        </SectionContent>
+        
+        <List>
+          <ListItem><strong>Latency Measurement</strong>: Precise timing analysis for competitive gaming and professional applications.</ListItem>
+          <ListItem><strong>Durability Testing</strong>: Simulate millions of keystrokes to predict keyboard lifespan and reliability.</ListItem>
+          <ListItem><strong>Acoustic Analysis</strong>: Measure and compare keyboard sound profiles for different environments.</ListItem>
+          <ListItem><strong>Force Curve Analysis</strong>: Detailed examination of key switch actuation characteristics.</ListItem>
+          <ListItem><strong>Consistency Testing</strong>: Verify that all switches perform identically across the keyboard.</ListItem>
+        </List>
+      </InfoContent>
+    </>
+  );
+
   const renderKeyTestInfo = () => (
     <>
       <InfoTitle>Keyboard Information</InfoTitle>
@@ -348,19 +452,27 @@ const InfoSection: React.FC<InfoSectionProps> = ({ activeTab }) => {
   );
 
   const renderContent = () => {
-    switch (activeTab) {
-      case 'keyTest':
-      case 'layout':
-      case 'type':
-      case 'themes':
-        return renderKeyTestInfo();
-      case 'rolloverTest':
-        return renderRolloverTestInfo();
-      case 'typingTest':
-        return renderTypingTestInfo();
-      default:
-        return null;
-    }
+    // Always show overview content, plus tab-specific content
+    return (
+      <>
+        {renderOverviewInfo()}
+        {(() => {
+          switch (activeTab) {
+            case 'keyTest':
+            case 'layout':
+            case 'type':
+            case 'themes':
+              return renderKeyTestInfo();
+            case 'rolloverTest':
+              return renderRolloverTestInfo();
+            case 'typingTest':
+              return renderTypingTestInfo();
+            default:
+              return null;
+          }
+        })()}
+      </>
+    );
   };
 
   // Only render if we have content for this tab

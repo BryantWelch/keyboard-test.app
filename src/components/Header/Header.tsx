@@ -14,6 +14,17 @@ const Title = styled.h1`
   margin-bottom: 1rem;
 `;
 
+const Subtitle = styled.h2`
+  color: ${props => props.theme.colors.text};
+  font-size: 1.3rem;
+  font-weight: 400;
+  margin-bottom: 1.5rem;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.4;
+`;
+
 const TypingContainer = styled.div`
   max-width: 800px;
   margin: 0 auto 1rem;
@@ -103,7 +114,12 @@ const Header: React.FC = () => {
   
   return (
     <HeaderContainer>
-      <Title>Professional Keyboard Testing</Title>
+      <Title>Keyboard Test</Title>
+      <Subtitle>
+        Professional keyboard testing platform for mechanical keyboards, typing performance analysis, 
+        and comprehensive keyboard evaluation. Test key response, N-key rollover, typing speed, 
+        and compare different layouts including 60%, 65%, 75%, TKL, and full-size keyboards.
+      </Subtitle>
       <TypingContainer>
         <TypingText>{displayText}</TypingText>
       </TypingContainer>
