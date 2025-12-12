@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, ReactNode } from 'react';
+import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 import { ThemeProvider as StyledThemeProvider } from 'styled-components';
 import { ThemeName, themeMetadata } from './themeTypes';
 
@@ -74,12 +74,34 @@ interface ThemeProviderProps {
   children: ReactNode;
 }
 
+const THEME_STORAGE_KEY = 'keyboard-test-theme';
+
+// Load saved theme from localStorage
+const getSavedTheme = (): ThemeName => {
+  try {
+    const saved = localStorage.getItem(THEME_STORAGE_KEY);
+    if (saved && saved in themeMetadata) {
+      return saved as ThemeName;
+    }
+  } catch {
+    // localStorage not available
+  }
+  return 'original';
+};
+
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
-  const [currentTheme, setCurrentTheme] = useState<ThemeName>('original');
+  const [currentTheme, setCurrentTheme] = useState<ThemeName>(getSavedTheme);
   const [theme, setThemeObject] = useState<Theme>(defaultTheme);
 
   const setTheme = (themeName: ThemeName) => {
     setCurrentTheme(themeName);
+    
+    // Save to localStorage
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, themeName);
+    } catch {
+      // localStorage not available
+    }
     
     // If it's the original theme, use the default theme
     if (themeName === 'original') {
@@ -119,6 +141,15 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     
     setThemeObject(newTheme);
   };
+
+  // Apply saved theme on mount
+  useEffect(() => {
+    const savedTheme = getSavedTheme();
+    if (savedTheme !== 'original') {
+      setTheme(savedTheme);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <ThemeContext.Provider value={{ currentTheme, theme, setTheme }}>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
+import { formatKeyName } from '../../utils/keyUtils';
 
 const RolloverContainer = styled.div`
   display: flex;
@@ -93,47 +94,22 @@ const InstructionText = styled.p`
 interface RolloverTestProps {
   onKeyDown?: (key: string) => void;
   onKeyUp?: (key: string) => void;
-  onReset?: () => void;
 }
 
-const RolloverTest: React.FC<RolloverTestProps> = ({ onKeyDown, onKeyUp, onReset }) => {
-  const [pressedKeys, setPressedKeys] = useState<Set<string>>(new Set());
+// Helper to normalize key names for special keys
+const normalizeKeyName = (e: KeyboardEvent): string => {
+  const { key, location } = e;
   
-  // Format key name for display
-  const formatKeyName = (key: string): string => {
-    switch (key) {
-      case 'ArrowLeft':
-      case 'Left':
-        return '←';
-      case 'ArrowRight':
-      case 'Right':
-        return '→';
-      case 'ArrowUp':
-      case 'Up':
-        return '↑';
-      case 'ArrowDown':
-      case 'Down':
-        return '↓';
-      case 'L-Shift':
-        return 'L-Shift';
-      case 'R-Shift':
-        return 'R-Shift';
-      case 'L-Ctrl':
-        return 'L-Ctrl';
-      case 'R-Ctrl':
-        return 'R-Ctrl';
-      case 'L-Alt':
-        return 'L-Alt';
-      case 'R-Alt':
-        return 'R-Alt';
-      case 'Control':
-        return 'Ctrl';
-      case 'Meta':
-        return 'Win';
-      default:
-        return key;
-    }
-  };
+  if (key === ' ') return 'Space';
+  if (key === 'Control') return location === 1 ? 'L-Ctrl' : 'R-Ctrl';
+  if (key === 'Shift') return location === 1 ? 'L-Shift' : 'R-Shift';
+  if (key === 'Alt') return location === 1 ? 'L-Alt' : 'R-Alt';
+  
+  return key;
+};
+
+const RolloverTest: React.FC<RolloverTestProps> = ({ onKeyDown, onKeyUp }) => {
+  const [pressedKeys, setPressedKeys] = useState<Set<string>>(new Set());
 
   // Effect to handle reset
   useEffect(() => {
@@ -155,17 +131,7 @@ const RolloverTest: React.FC<RolloverTestProps> = ({ onKeyDown, onKeyUp, onReset
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       e.preventDefault();
-      
-      let keyName = e.key;
-      
-      // Handle special keys
-      if (e.key === ' ') keyName = 'Space';
-      if (e.key === 'Control' && e.location === 1) keyName = 'L-Ctrl';
-      if (e.key === 'Control' && e.location === 2) keyName = 'R-Ctrl';
-      if (e.key === 'Shift' && e.location === 1) keyName = 'L-Shift';
-      if (e.key === 'Shift' && e.location === 2) keyName = 'R-Shift';
-      if (e.key === 'Alt' && e.location === 1) keyName = 'L-Alt';
-      if (e.key === 'Alt' && e.location === 2) keyName = 'R-Alt';
+      const keyName = normalizeKeyName(e);
       
       setPressedKeys(prev => {
         const newSet = new Set(prev);
@@ -173,24 +139,12 @@ const RolloverTest: React.FC<RolloverTestProps> = ({ onKeyDown, onKeyUp, onReset
         return newSet;
       });
       
-      if (onKeyDown) {
-        onKeyDown(keyName);
-      }
+      onKeyDown?.(keyName);
     };
     
     const handleKeyUp = (e: KeyboardEvent) => {
       e.preventDefault();
-      
-      let keyName = e.key;
-      
-      // Handle special keys (same as in keydown)
-      if (e.key === ' ') keyName = 'Space';
-      if (e.key === 'Control' && e.location === 1) keyName = 'L-Ctrl';
-      if (e.key === 'Control' && e.location === 2) keyName = 'R-Ctrl';
-      if (e.key === 'Shift' && e.location === 1) keyName = 'L-Shift';
-      if (e.key === 'Shift' && e.location === 2) keyName = 'R-Shift';
-      if (e.key === 'Alt' && e.location === 1) keyName = 'L-Alt';
-      if (e.key === 'Alt' && e.location === 2) keyName = 'R-Alt';
+      const keyName = normalizeKeyName(e);
       
       setPressedKeys(prev => {
         const newSet = new Set(prev);
@@ -198,9 +152,7 @@ const RolloverTest: React.FC<RolloverTestProps> = ({ onKeyDown, onKeyUp, onReset
         return newSet;
       });
       
-      if (onKeyUp) {
-        onKeyUp(keyName);
-      }
+      onKeyUp?.(keyName);
     };
     
     // Add event listeners

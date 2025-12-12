@@ -121,9 +121,10 @@ const KofiLink = styled.a`
   }
 `;
 
-const Footer = () => {
-  const currentYear = new Date().getFullYear();
+// Calculate year once at module load, not on every render
+const currentYear = new Date().getFullYear();
 
+const Footer: React.FC = () => {
   return (
     <FooterContainer>
       <FooterContent>

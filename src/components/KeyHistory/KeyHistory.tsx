@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
+import { formatKeyName } from '../../utils/keyUtils';
 
 const HistoryContainer = styled.div`
   background-color: ${props => props.theme.colors.background};
@@ -66,41 +67,6 @@ interface KeyHistoryProps {
 }
 
 const KeyHistory: React.FC<KeyHistoryProps> = ({ keys, maxKeys = 15 }) => {
-  const formatKeyName = (key: string): string => {
-    switch (key) {
-      case 'ArrowLeft':
-      case 'Left':
-        return '←';
-      case 'ArrowRight':
-      case 'Right':
-        return '→';
-      case 'ArrowUp':
-      case 'Up':
-        return '↑';
-      case 'ArrowDown':
-      case 'Down':
-        return '↓';
-      case 'L-Shift':
-        return 'L-Shift';
-      case 'R-Shift':
-        return 'R-Shift';
-      case 'L-Ctrl':
-        return 'L-Ctrl';
-      case 'R-Ctrl':
-        return 'R-Ctrl';
-      case 'L-Alt':
-        return 'L-Alt';
-      case 'R-Alt':
-        return 'R-Alt';
-      case 'Control':
-        return 'Ctrl';
-      case 'Meta':
-        return 'Win';
-      default:
-        return key;
-    }
-  };
-
   const displayKeys = keys.slice(-maxKeys).reverse();
 
   return (

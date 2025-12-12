@@ -287,7 +287,6 @@ const TestContainer: React.FC<TestContainerProps> = ({ onKeyPress, onReset, onTa
         return <RolloverTest 
                  onKeyDown={onKeyPress} 
                  onKeyUp={() => {}} 
-                 onReset={onReset}
                />;
       case 'typingTest':
         return <TypingTest onReset={onReset} />;
