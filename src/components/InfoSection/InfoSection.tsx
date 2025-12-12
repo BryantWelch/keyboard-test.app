@@ -452,27 +452,27 @@ const InfoSection: React.FC<InfoSectionProps> = ({ activeTab }) => {
   );
 
   const renderContent = () => {
-    // Always show overview content, plus tab-specific content
-    return (
-      <>
-        {renderOverviewInfo()}
-        {(() => {
-          switch (activeTab) {
-            case 'keyTest':
-            case 'layout':
-            case 'type':
-            case 'themes':
-              return renderKeyTestInfo();
-            case 'rolloverTest':
-              return renderRolloverTestInfo();
-            case 'typingTest':
-              return renderTypingTestInfo();
-            default:
-              return null;
-          }
-        })()}
-      </>
-    );
+    switch (activeTab) {
+      case 'keyTest':
+      case 'layout':
+      case 'type':
+      case 'themes':
+        // Show overview + keyboard info on main key test tab
+        return (
+          <>
+            {renderOverviewInfo()}
+            {renderKeyTestInfo()}
+          </>
+        );
+      case 'rolloverTest':
+        // Only show rollover-specific info
+        return renderRolloverTestInfo();
+      case 'typingTest':
+        // Only show typing-specific info
+        return renderTypingTestInfo();
+      default:
+        return null;
+    }
   };
 
   // Only render if we have content for this tab

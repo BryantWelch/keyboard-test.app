@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 
 const HeaderContainer = styled.header`
@@ -46,7 +46,7 @@ const TypingText = styled.p`
 `;
 
 const Header: React.FC = () => {
-  const phrases = [
+  const phrases = useMemo(() => [
     "Comprehensive tools to evaluate and optimize your keyboard & typing skills",
     "Clickity clackity, your keyboard goes whackity",
     "Test your typing speed and accuracy",
@@ -75,7 +75,7 @@ const Header: React.FC = () => {
     "Optimize your workspace for better typing performance",
     "Discover your ideal key actuation force",
     "Scientific approach to keyboard evaluation"
-  ];
+  ], []);
   
   const [displayText, setDisplayText] = useState('');
   const [phraseIndex, setPhraseIndex] = useState(0);
@@ -117,8 +117,7 @@ const Header: React.FC = () => {
       <Title>Keyboard Test</Title>
       <Subtitle>
         Professional keyboard testing platform for mechanical keyboards, typing performance analysis, 
-        and comprehensive keyboard evaluation. Test key response, N-key rollover, typing speed, 
-        and compare different layouts including 60%, 65%, 75%, TKL, and full-size keyboards.
+        and comprehensive keyboard evaluation.
       </Subtitle>
       <TypingContainer>
         <TypingText>{displayText}</TypingText>

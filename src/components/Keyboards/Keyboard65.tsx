@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import Key, { KeySize } from './Key';
+import Key from './Key';
 import { useKeyboardEvents } from './useKeyboardEvents';
 import { KeyboardLayoutType } from './keyboardTypes';
 
