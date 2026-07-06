@@ -40,10 +40,18 @@ export const useKeyboardEvents = (
     });
   }, []);
 
+  const clearPressedKeys = useCallback(() => {
+    setPressedKeys(new Set());
+  }, []);
+
   useEffect(() => {
     const handleKeyDownEvent = (event: KeyboardEvent) => {
       // Prevent default behavior for ALL keys during key test
       event.preventDefault();
+
+      if (event.repeat) {
+        return;
+      }
       
       // Use the event.code directly as our key name
       // This matches the key names used in the keyboard components
@@ -66,14 +74,24 @@ export const useKeyboardEvents = (
       }
     };
 
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        clearPressedKeys();
+      }
+    };
+
     window.addEventListener('keydown', handleKeyDownEvent);
     window.addEventListener('keyup', handleKeyUpEvent);
+    window.addEventListener('blur', clearPressedKeys);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
     
     return () => {
       window.removeEventListener('keydown', handleKeyDownEvent);
       window.removeEventListener('keyup', handleKeyUpEvent);
+      window.removeEventListener('blur', clearPressedKeys);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [handleKeyPress, handleKeyUp]);
+  }, [clearPressedKeys, handleKeyPress, handleKeyUp]);
 
   return [
     { testedKeys, pressedKeys },

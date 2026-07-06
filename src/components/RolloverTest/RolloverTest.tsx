@@ -96,16 +96,8 @@ interface RolloverTestProps {
   onKeyUp?: (key: string) => void;
 }
 
-// Helper to normalize key names for special keys
-const normalizeKeyName = (e: KeyboardEvent): string => {
-  const { key, location } = e;
-  
-  if (key === ' ') return 'Space';
-  if (key === 'Control') return location === 1 ? 'L-Ctrl' : 'R-Ctrl';
-  if (key === 'Shift') return location === 1 ? 'L-Shift' : 'R-Shift';
-  if (key === 'Alt') return location === 1 ? 'L-Alt' : 'R-Alt';
-  
-  return key;
+const getKeyIdentifier = (e: KeyboardEvent): string => {
+  return e.code || e.key;
 };
 
 const RolloverTest: React.FC<RolloverTestProps> = ({ onKeyDown, onKeyUp }) => {
@@ -129,9 +121,24 @@ const RolloverTest: React.FC<RolloverTestProps> = ({ onKeyDown, onKeyUp }) => {
 
   // Add event listeners for key down and key up
   useEffect(() => {
+    const clearPressedKeys = () => {
+      setPressedKeys(new Set());
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        clearPressedKeys();
+      }
+    };
+
     const handleKeyDown = (e: KeyboardEvent) => {
       e.preventDefault();
-      const keyName = normalizeKeyName(e);
+
+      if (e.repeat) {
+        return;
+      }
+
+      const keyName = getKeyIdentifier(e);
       
       setPressedKeys(prev => {
         const newSet = new Set(prev);
@@ -144,7 +151,7 @@ const RolloverTest: React.FC<RolloverTestProps> = ({ onKeyDown, onKeyUp }) => {
     
     const handleKeyUp = (e: KeyboardEvent) => {
       e.preventDefault();
-      const keyName = normalizeKeyName(e);
+      const keyName = getKeyIdentifier(e);
       
       setPressedKeys(prev => {
         const newSet = new Set(prev);
@@ -158,11 +165,15 @@ const RolloverTest: React.FC<RolloverTestProps> = ({ onKeyDown, onKeyUp }) => {
     // Add event listeners
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
+    window.addEventListener('blur', clearPressedKeys);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
     
     // Clean up
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
+      window.removeEventListener('blur', clearPressedKeys);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [onKeyDown, onKeyUp]);
   

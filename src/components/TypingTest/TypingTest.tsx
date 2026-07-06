@@ -202,6 +202,32 @@ const initialStats: TestStats = {
   timeElapsed: 0
 };
 
+const calculateStatsFromWords = (
+  testWords: TypedWord[],
+  startedAt: number | null,
+  completedAt: number
+): TestStats => {
+  if (!startedAt) {
+    return initialStats;
+  }
+
+  const timeElapsed = Math.max(completedAt - startedAt, 1);
+  const timeInMinutes = timeElapsed / 1000 / 60;
+  const correctWords = testWords.filter(word => word.status === 'correct').length;
+  const incorrectWords = testWords.filter(word => word.status === 'incorrect').length;
+  const totalTypedWords = correctWords + incorrectWords;
+
+  return {
+    wpm: Math.round(correctWords / timeInMinutes),
+    accuracy: totalTypedWords > 0
+      ? Math.round((correctWords / totalTypedWords) * 100)
+      : 0,
+    correctWords,
+    incorrectWords,
+    timeElapsed
+  };
+};
+
 const TypingTest: React.FC<TypingTestProps> = ({ onReset }) => {
   // State for test configuration
   const [testMode, setTestMode] = useState<TestMode>('wordCount');
@@ -221,6 +247,13 @@ const TypingTest: React.FC<TypingTestProps> = ({ onReset }) => {
   // Refs
   const inputRef = useRef<HTMLInputElement>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const wordsRef = useRef<TypedWord[]>([]);
+  const startTimeRef = useRef<number | null>(null);
+
+  const updateWords = useCallback((nextWords: TypedWord[]) => {
+    wordsRef.current = nextWords;
+    setWords(nextWords);
+  }, []);
   
   // Convert timed option to seconds
   const getTimeInSeconds = (option: TimeOption): number => {
@@ -253,7 +286,7 @@ const TypingTest: React.FC<TypingTestProps> = ({ onReset }) => {
         typedWords[0].status = 'current';
       }
       
-      setWords(typedWords);
+      updateWords(typedWords);
     } else {
       // Get random sentences or paragraphs for timed test
       // For timed tests, we need more words than expected to be typed
@@ -280,7 +313,7 @@ const TypingTest: React.FC<TypingTestProps> = ({ onReset }) => {
         typedWords[0].status = 'current';
       }
       
-      setWords(typedWords);
+      updateWords(typedWords);
     }
     
     // Reset test state
@@ -290,6 +323,7 @@ const TypingTest: React.FC<TypingTestProps> = ({ onReset }) => {
     setIsTestComplete(false);
     setStartTime(null);
     setEndTime(null);
+    startTimeRef.current = null;
     setStats(initialStats);
     
     // Clear any existing timer
@@ -297,17 +331,37 @@ const TypingTest: React.FC<TypingTestProps> = ({ onReset }) => {
       clearInterval(timerRef.current);
       timerRef.current = null;
     }
-  }, [testMode, wordCount, timedOption]);
+  }, [testMode, wordCount, timedOption, updateWords]);
+
+  // Complete the test using the latest word state, even from timer callbacks.
+  const completeTest = useCallback((
+    finalWords: TypedWord[] = wordsRef.current,
+    completedAt: number = Date.now(),
+    startedAt: number | null = startTimeRef.current
+  ) => {
+    setIsTestActive(false);
+    setIsTestComplete(true);
+    setEndTime(completedAt);
+    
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    
+    setStats(calculateStatsFromWords(finalWords, startedAt, completedAt));
+  }, []);
 
   // Start the test
   const startTest = () => {
+    const startedAt = Date.now();
     setIsTestActive(true);
-    setStartTime(Date.now());
+    setStartTime(startedAt);
+    startTimeRef.current = startedAt;
     
     if (testMode === 'timed') {
       // Calculate the exact end time
       const timeLimit = getTimeInSeconds(timedOption) * 1000;
-      const endTimeValue = Date.now() + timeLimit;
+      const endTimeValue = startedAt + timeLimit;
       
       // Start the timer that checks every 100ms
       timerRef.current = setInterval(() => {
@@ -315,7 +369,7 @@ const TypingTest: React.FC<TypingTestProps> = ({ onReset }) => {
         
         // Check if we've reached or passed the end time
         if (currentTime >= endTimeValue) {
-          completeTest();
+          completeTest(wordsRef.current, endTimeValue, startedAt);
         }
       }, 100); // Check more frequently (every 100ms) for more precise timing
     }
@@ -326,53 +380,9 @@ const TypingTest: React.FC<TypingTestProps> = ({ onReset }) => {
     }
   };
 
-  // Calculate test statistics
-  const calculateStats = useCallback(() => {
-    if (!startTime) return;
-    
-    const timeElapsed = (endTime || Date.now()) - startTime;
-    const timeInMinutes = timeElapsed / 1000 / 60;
-    
-    let correctWords = 0;
-    let incorrectWords = 0;
-    
-    words.forEach(word => {
-      if (word.status === 'correct') correctWords++;
-      else if (word.status === 'incorrect') incorrectWords++;
-    });
-    
-    const totalTypedWords = correctWords + incorrectWords;
-    const wpm = Math.round(correctWords / timeInMinutes);
-    const accuracy = totalTypedWords > 0 
-      ? Math.round((correctWords / totalTypedWords) * 100) 
-      : 0;
-    
-    const newStats: TestStats = {
-      wpm,
-      accuracy,
-      correctWords,
-      incorrectWords,
-      timeElapsed
-    };
-    
-    setStats(newStats);
-  }, [startTime, endTime, words]);
-
-  // Complete the test
-  const completeTest = useCallback(() => {
-    setIsTestActive(false);
-    setIsTestComplete(true);
-    setEndTime(Date.now());
-    
-    // Clear any timer
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
-    
-    // Calculate final stats
-    calculateStats();
-  }, [calculateStats]);
+  const refreshStats = useCallback(() => {
+    setStats(calculateStatsFromWords(wordsRef.current, startTimeRef.current, Date.now()));
+  }, []);
 
   // Handle input change
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -424,11 +434,11 @@ const TypingTest: React.FC<TypingTestProps> = ({ onReset }) => {
     } else {
       // End of test for word count mode
       if (testMode === 'wordCount') {
-        completeTest();
+        completeTest(updatedWords);
       }
     }
     
-    setWords(updatedWords);
+    updateWords(updatedWords);
   };
 
   // Skip the current word
@@ -446,11 +456,11 @@ const TypingTest: React.FC<TypingTestProps> = ({ onReset }) => {
     } else {
       // End of test for word count mode
       if (testMode === 'wordCount') {
-        completeTest();
+        completeTest(updatedWords);
       }
     }
     
-    setWords(updatedWords);
+    updateWords(updatedWords);
     setCurrentInput('');
   };
 
@@ -511,12 +521,12 @@ const TypingTest: React.FC<TypingTestProps> = ({ onReset }) => {
   useEffect(() => {
     if (isTestActive && startTime) {
       const statsInterval = setInterval(() => {
-        calculateStats();
+        refreshStats();
       }, 1000);
       
       return () => clearInterval(statsInterval);
     }
-  }, [isTestActive, startTime, calculateStats]);
+  }, [isTestActive, startTime, refreshStats]);
   
   // Effect to focus input field when component mounts
   useEffect(() => {
