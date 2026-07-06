@@ -1,6 +1,6 @@
 {
   "short_name": "Keyboard Test",
-  "name": "Keyboard Test - Interactive Keyboard Testing Tool",
+  "name": "Keyboard Test - Free Online Keyboard Tester",
   "icons": [
     {
       "src": "favicon.ico",
@@ -18,9 +18,10 @@
       "sizes": "512x512"
     }
   ],
-  "start_url": ".",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff",
-  "description": "Interactive keyboard testing application for comparing different keyboard layouts (QWERTY, Dvorak, Colemak) and sizes (60%, 65%, 75%, TKL, Full). Perform key rollover tests, typing tests, and visualize keystrokes."
+  "theme_color": "#111827",
+  "background_color": "#111827",
+  "description": "Free online keyboard tester for checking key response, N-key rollover, typing speed, typing accuracy, and keyboard layouts."
 }
