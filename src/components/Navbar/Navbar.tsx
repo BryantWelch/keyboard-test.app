@@ -25,7 +25,7 @@ const LeftSection = styled.div`
   gap: 5rem;
 `;
 
-const Logo = styled.h1`
+const Logo = styled.div`
   background: ${props => props.theme.gradients.logo};
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;

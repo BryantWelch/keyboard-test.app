@@ -101,21 +101,21 @@ interface InfoSectionProps {
 const InfoSection: React.FC<InfoSectionProps> = ({ activeTab }) => {
   const renderOverviewInfo = () => (
     <>
-      <InfoTitle>Comprehensive Keyboard Testing Platform</InfoTitle>
+      <InfoTitle>Free Online Keyboard Testing Platform</InfoTitle>
       <InfoContent>
         <SectionContent>
-          Welcome to the most comprehensive keyboard testing platform available online. Our interactive tools help you evaluate mechanical keyboards, optimize your typing technique, and find the perfect setup for your needs. Whether you're a gamer, programmer, writer, or typing enthusiast, our scientific approach to keyboard testing provides valuable insights into your typing performance.
+          Use Keyboard Test to verify that every key registers, check how many keys your keyboard can detect at once, and measure your typing speed and accuracy. The browser-based tools work well for mechanical keyboards, gaming keyboards, laptop keyboards, and everyday desktop keyboards.
         </SectionContent>
         
         <SectionTitle>Why Test Your Keyboard?</SectionTitle>
         <SectionContent>
-          Keyboard testing is essential for understanding your typing patterns, identifying potential issues, and optimizing your setup. A properly functioning keyboard can significantly impact your productivity, comfort, and overall computing experience. Our testing suite covers all major aspects of keyboard performance.
+          Keyboard testing helps you catch stuck keys, missed inputs, rollover limits, and typing accuracy issues before they interrupt work or gameplay. A quick test can confirm whether a new keyboard, laptop, switch replacement, or layout change is working as expected.
         </SectionContent>
         
         <InfoGrid>
           <InfoCard>
             <h4>🎯 Key Response Testing</h4>
-            <p>Verify that every key on your keyboard registers correctly. Identify stuck keys, double-clicking issues, or keys that don't respond. Essential for gaming and professional typing.</p>
+            <p>Verify that every key on your keyboard registers correctly. Identify stuck keys, missed keypresses, or keys that don't respond during normal typing.</p>
           </InfoCard>
           
           <InfoCard>
@@ -125,7 +125,7 @@ const InfoSection: React.FC<InfoSectionProps> = ({ activeTab }) => {
           
           <InfoCard>
             <h4>📊 Typing Performance Analysis</h4>
-            <p>Measure your words per minute (WPM), accuracy, and consistency across different texts. Track your progress and identify areas for improvement with detailed statistics.</p>
+            <p>Measure your words per minute (WPM), accuracy, correct words, and incorrect words across word-count and timed typing tests.</p>
           </InfoCard>
           
           <InfoCard>
@@ -134,13 +134,13 @@ const InfoSection: React.FC<InfoSectionProps> = ({ activeTab }) => {
           </InfoCard>
         </InfoGrid>
         
-        <SectionTitle>Professional Keyboard Testing Features</SectionTitle>
+        <SectionTitle>Keyboard Testing Features</SectionTitle>
         <List>
           <ListItem><strong>Real-time Keystroke Visualization</strong>: See exactly which keys you press and when, helping identify typing patterns and issues.</ListItem>
-          <ListItem><strong>Switch Type Analysis</strong>: Test different mechanical switch types to understand their characteristics and find your preference.</ListItem>
-          <ListItem><strong>Ergonomic Assessment</strong>: Evaluate keyboard layouts for comfort and efficiency during extended typing sessions.</ListItem>
-          <ListItem><strong>Gaming Performance Testing</strong>: Specialized tests for gaming keyboards including anti-ghosting and key rollover validation.</ListItem>
-          <ListItem><strong>Professional Compatibility</strong>: Test keyboard functionality across different operating systems and applications.</ListItem>
+          <ListItem><strong>Rollover and Anti-Ghosting Checks</strong>: Press multiple keys at once to see how your keyboard handles simultaneous input.</ListItem>
+          <ListItem><strong>Typing Speed Testing</strong>: Run word-count or timed typing tests and review WPM, accuracy, correct words, and incorrect words.</ListItem>
+          <ListItem><strong>Keyboard Layout Previews</strong>: Compare 60%, 65%, 75%, TKL, and full-size layouts in common typing systems.</ListItem>
+          <ListItem><strong>Custom Themes</strong>: Change the visual theme to make longer typing and keyboard tests easier on your eyes.</ListItem>
         </List>
         
         <SectionTitle>Keyboard Layout Guide</SectionTitle>
@@ -187,17 +187,16 @@ const InfoSection: React.FC<InfoSectionProps> = ({ activeTab }) => {
           </tbody>
         </Table>
         
-        <SectionTitle>Advanced Testing Capabilities</SectionTitle>
+        <SectionTitle>How to Use the Keyboard Tester</SectionTitle>
         <SectionContent>
-          Our platform provides enterprise-grade testing capabilities typically found in professional keyboard testing laboratories. These tools help manufacturers, reviewers, and enthusiasts evaluate keyboard performance with scientific precision.
+          Start with the key test to confirm that each key lights up when pressed. Then use the rollover test to hold several keys at once and check whether your keyboard detects every key in the combination. Finally, run a typing test to measure WPM and accuracy with either a fixed word count or a timed challenge.
         </SectionContent>
         
         <List>
-          <ListItem><strong>Latency Measurement</strong>: Precise timing analysis for competitive gaming and professional applications.</ListItem>
-          <ListItem><strong>Durability Testing</strong>: Simulate millions of keystrokes to predict keyboard lifespan and reliability.</ListItem>
-          <ListItem><strong>Acoustic Analysis</strong>: Measure and compare keyboard sound profiles for different environments.</ListItem>
-          <ListItem><strong>Force Curve Analysis</strong>: Detailed examination of key switch actuation characteristics.</ListItem>
-          <ListItem><strong>Consistency Testing</strong>: Verify that all switches perform identically across the keyboard.</ListItem>
+          <ListItem><strong>New Keyboard Setup</strong>: Confirm every key works before relying on a new board for work, school, or gaming.</ListItem>
+          <ListItem><strong>Gaming Keyboard Checks</strong>: Test common multi-key combinations used for movement, modifiers, and shortcuts.</ListItem>
+          <ListItem><strong>Laptop Keyboard Troubleshooting</strong>: Find unresponsive or inconsistent keys without installing software.</ListItem>
+          <ListItem><strong>Typing Practice</strong>: Track speed and accuracy while experimenting with layouts such as QWERTY, Dvorak, Colemak, and Workman.</ListItem>
         </List>
       </InfoContent>
     </>
