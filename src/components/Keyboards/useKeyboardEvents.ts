@@ -1,8 +1,13 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { emptySession, publishSession, SessionSnapshot } from './session';
+
+const CHATTER_WINDOW_MS = 28;
 
 export interface KeyboardState {
   testedKeys: Set<string>;
   pressedKeys: Set<string>;
+  pressCounts: Map<string, number>;
+  stats: SessionSnapshot;
 }
 
 export interface KeyboardActions {
@@ -10,91 +15,218 @@ export interface KeyboardActions {
   handleReset: () => void;
 }
 
+interface KeyMeta {
+  key: string;
+  location: number;
+}
+
+interface KeyboardModel {
+  testedKeys: Set<string>;
+  pressedKeys: Set<string>;
+  pressCounts: Map<string, number>;
+  stats: SessionSnapshot;
+}
+
+const createModel = (): KeyboardModel => ({
+  testedKeys: new Set(),
+  pressedKeys: new Set(),
+  pressCounts: new Map(),
+  stats: emptySession(),
+});
+
+const isTypingTarget = (target: EventTarget | null): boolean => {
+  if (!(target instanceof HTMLElement)) {
+    return false;
+  }
+
+  return target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable;
+};
+
 export const useKeyboardEvents = (
   onKeyPress?: (key: string) => void,
   onReset?: () => void
 ): [KeyboardState, KeyboardActions] => {
-  const [testedKeys, setTestedKeys] = useState<Set<string>>(new Set());
-  const [pressedKeys, setPressedKeys] = useState<Set<string>>(new Set());
-
-  const handleReset = useCallback(() => {
-    // Create new empty sets to ensure complete reset
-    setTestedKeys(new Set());
-    setPressedKeys(new Set());
-    
-    // Call the parent onReset callback if provided
-    onReset?.();
-  }, [onReset]);
-
-  const handleKeyPress = useCallback((key: string) => {
-    setTestedKeys(prev => new Set(prev).add(key));
-    setPressedKeys(prev => new Set(prev).add(key));
-    onKeyPress?.(key);
-  }, [onKeyPress]);
-
-  const handleKeyUp = useCallback((key: string) => {
-    setPressedKeys(prev => {
-      const newKeys = new Set(prev);
-      newKeys.delete(key);
-      return newKeys;
-    });
-  }, []);
-
-  const clearPressedKeys = useCallback(() => {
-    setPressedKeys(new Set());
-  }, []);
+  const [model, setModel] = useState<KeyboardModel>(createModel);
+  const modelRef = useRef(model);
+  const downTimes = useRef<Map<string, number>>(new Map());
+  const upTimes = useRef<Map<string, number>>(new Map());
+  const onKeyPressRef = useRef(onKeyPress);
+  const onResetRef = useRef(onReset);
 
   useEffect(() => {
-    const handleKeyDownEvent = (event: KeyboardEvent) => {
-      // Prevent default behavior for ALL keys during key test
-      event.preventDefault();
+    onKeyPressRef.current = onKeyPress;
+  }, [onKeyPress]);
 
-      if (event.repeat) {
-        return;
-      }
-      
-      // Use the event.code directly as our key name
-      // This matches the key names used in the keyboard components
-      const keyName = event.code;
-      
-      if (keyName) {
-        handleKeyPress(keyName);
-      }
+  useEffect(() => {
+    onResetRef.current = onReset;
+  }, [onReset]);
+
+  const commit = useCallback((next: KeyboardModel) => {
+    modelRef.current = next;
+    setModel(next);
+    publishSession(next.stats);
+  }, []);
+
+  const releaseKey = useCallback((code: string, ignoreHold: boolean) => {
+    const prev = modelRef.current;
+    const startedAt = downTimes.current.get(code);
+    downTimes.current.delete(code);
+
+    if (!prev.pressedKeys.has(code) && startedAt == null) {
+      return;
+    }
+
+    const pressedKeys = new Set(prev.pressedKeys);
+    pressedKeys.delete(code);
+
+    const stats: SessionSnapshot = {
+      ...prev.stats,
+      held: pressedKeys.size,
     };
 
-    const handleKeyUpEvent = (event: KeyboardEvent) => {
-      event.preventDefault();
-      
-      // Use the event.code directly as our key name
-      // This matches the key names used in the keyboard components
-      const keyName = event.code;
-
-      if (keyName) {
-        handleKeyUp(keyName);
+    if (!ignoreHold && startedAt != null) {
+      const holdMs = Math.round(performance.now() - startedAt);
+      if (holdMs >= 0 && holdMs < 10000) {
+        const holdSum = prev.stats.holdSum + holdMs;
+        const holdCount = prev.stats.holdCount + 1;
+        stats.holdSum = holdSum;
+        stats.holdCount = holdCount;
+        stats.avgHoldMs = Math.round(holdSum / holdCount);
+        stats.minHoldMs = prev.stats.minHoldMs == null ? holdMs : Math.min(prev.stats.minHoldMs, holdMs);
+        stats.maxHoldMs = prev.stats.maxHoldMs == null ? holdMs : Math.max(prev.stats.maxHoldMs, holdMs);
+        if (stats.last?.code === code) {
+          stats.last = { ...stats.last, holdMs };
+        }
       }
+      upTimes.current.set(code, performance.now());
+    }
+
+    commit({
+      ...prev,
+      pressedKeys,
+      stats,
+    });
+  }, [commit]);
+
+  const pressKey = useCallback((code: string, meta?: KeyMeta, momentary = false) => {
+    const now = performance.now();
+    const prev = modelRef.current;
+    const previousUp = upTimes.current.get(code);
+    const chatter = previousUp != null && now - previousUp < CHATTER_WINDOW_MS;
+    const testedKeys = new Set(prev.testedKeys);
+    testedKeys.add(code);
+    const pressedKeys = new Set(prev.pressedKeys);
+    pressedKeys.add(code);
+    const pressCounts = new Map(prev.pressCounts);
+    pressCounts.set(code, (pressCounts.get(code) ?? 0) + 1);
+    downTimes.current.set(code, now);
+
+    const stats: SessionSnapshot = {
+      ...prev.stats,
+      tested: testedKeys.size,
+      presses: prev.stats.presses + 1,
+      peakHeld: Math.max(prev.stats.peakHeld, pressedKeys.size),
+      held: pressedKeys.size,
+      chatter: prev.stats.chatter + (chatter ? 1 : 0),
+      last: {
+        code,
+        key: meta?.key || code,
+        location: meta?.location ?? 0,
+        holdMs: null,
+      },
+    };
+
+    commit({
+      testedKeys,
+      pressedKeys,
+      pressCounts,
+      stats,
+    });
+
+    onKeyPressRef.current?.(code);
+
+    if (momentary) {
+      const stamp = now;
+      window.setTimeout(() => {
+        if (downTimes.current.get(code) === stamp) {
+          releaseKey(code, true);
+        }
+      }, 90);
+    }
+  }, [commit, releaseKey]);
+
+  const handleKeyPress = useCallback((key: string) => {
+    pressKey(key, { key, location: 0 }, true);
+  }, [pressKey]);
+
+  const handleReset = useCallback(() => {
+    downTimes.current.clear();
+    upTimes.current.clear();
+    commit(createModel());
+    onResetRef.current?.();
+  }, [commit]);
+
+  useEffect(() => {
+    publishSession(modelRef.current.stats);
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (isTypingTarget(event.target) || event.repeat || !event.code) {
+        return;
+      }
+
+      event.preventDefault();
+      pressKey(event.code, { key: event.key, location: event.location });
+    };
+
+    const handleKeyUp = (event: KeyboardEvent) => {
+      if (isTypingTarget(event.target) || !event.code) {
+        return;
+      }
+
+      event.preventDefault();
+      releaseKey(event.code, false);
+    };
+
+    const clearHeldKeys = () => {
+      Array.from(downTimes.current.keys()).forEach((code) => releaseKey(code, true));
+      const prev = modelRef.current;
+      if (prev.pressedKeys.size === 0) {
+        return;
+      }
+
+      commit({
+        ...prev,
+        pressedKeys: new Set(),
+        stats: { ...prev.stats, held: 0 },
+      });
+      downTimes.current.clear();
     };
 
     const handleVisibilityChange = () => {
       if (document.hidden) {
-        clearPressedKeys();
+        clearHeldKeys();
       }
     };
 
-    window.addEventListener('keydown', handleKeyDownEvent);
-    window.addEventListener('keyup', handleKeyUpEvent);
-    window.addEventListener('blur', clearPressedKeys);
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    window.addEventListener('blur', clearHeldKeys);
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    
+
     return () => {
-      window.removeEventListener('keydown', handleKeyDownEvent);
-      window.removeEventListener('keyup', handleKeyUpEvent);
-      window.removeEventListener('blur', clearPressedKeys);
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+      window.removeEventListener('blur', clearHeldKeys);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+      publishSession(emptySession());
     };
-  }, [clearPressedKeys, handleKeyPress, handleKeyUp]);
+  }, [commit, pressKey, releaseKey]);
 
   return [
-    { testedKeys, pressedKeys },
-    { handleKeyPress, handleReset }
+    model,
+    {
+      handleKeyPress,
+      handleReset,
+    },
   ];
 };

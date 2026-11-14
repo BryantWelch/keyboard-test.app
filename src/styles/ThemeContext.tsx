@@ -11,6 +11,7 @@ export interface Theme {
     secondary: string;
     accent: string;
     glass: string;
+    error: string;
   };
   gradients: {
     logo: string;
@@ -37,7 +38,8 @@ const defaultTheme: Theme = {
     primary: '#7f8eee',
     secondary: '#9c1579',
     accent: '#e53d63',
-    glass: 'rgba(1, 3, 10, 0.8)'
+    glass: 'rgba(1, 3, 10, 0.8)',
+    error: '#ff5d73'
   },
   gradients: {
     logo: 'linear-gradient(to right, #7f8eee, #9c1579)',
@@ -120,7 +122,8 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
         primary: meta.colors.primary,
         secondary: meta.colors.secondary || meta.colors.primary,
         accent: meta.colors.accent || meta.colors.primary,
-        glass: `rgba(${hexToRgb(meta.colors.background)}, 0.8)`
+        glass: `rgba(${hexToRgb(meta.colors.background)}, 0.8)`,
+        error: '#e5484d'
       },
       gradients: {
         logo: `linear-gradient(to right, ${meta.colors.primary}, ${meta.colors.secondary || meta.colors.primary})`,
@@ -142,7 +145,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     setThemeObject(newTheme);
   };
 
-  // Apply saved theme on mount
+  // Apply the saved theme on mount, and keep the page background in sync.
   useEffect(() => {
     const savedTheme = getSavedTheme();
     if (savedTheme !== 'original') {
@@ -150,6 +153,13 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    document.body.style.backgroundColor = theme.colors.background;
+    const [red, green, blue] = hexToRgb(theme.colors.background).split(',').map(Number);
+    const luminance = (red * 0.2126 + green * 0.7152 + blue * 0.0722) / 255;
+    document.documentElement.style.colorScheme = luminance > 0.6 ? 'light' : 'dark';
+  }, [theme]);
 
   return (
     <ThemeContext.Provider value={{ currentTheme, theme, setTheme }}>

@@ -1,100 +1,182 @@
-import React from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { formatKeyName } from '../../utils/keyUtils';
 
 const HistoryContainer = styled.div`
   background-color: ${props => props.theme.colors.background};
-  border: 1px solid ${props => props.theme.colors.primary};
-  border-radius: 8px;
-  padding: 1rem;
-  margin: 1rem auto 3rem auto;
+  border: 1px solid ${props => props.theme.colors.primary}55;
+  border-radius: 14px;
+  padding: 0.7rem 0.85rem;
+  margin: 0.75rem auto 2rem auto;
   width: 100%;
-  max-width: 800px;
-  height: 60px;
+  max-width: 1200px;
+  min-width: 0;
+  min-height: 64px;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  overflow-x: auto;
-  position: relative;
-  
-  &:before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
-    pointer-events: none;
-    border-radius: 8px;
-  }
-  
-  /* Hide scrollbar for Chrome, Safari and Opera */
-  &::-webkit-scrollbar {
-    display: none;
-  }
-  
-  /* Hide scrollbar for IE, Edge and Firefox */
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+  gap: 0.75rem;
+`;
+
+const LabelGroup = styled.div`
+  flex: 0 0 auto;
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+`;
+
+const HistoryLabel = styled.div`
+  color: ${props => props.theme.colors.text};
+  opacity: 0.55;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+`;
+
+const HistoryCount = styled.div`
+  color: ${props => props.theme.colors.text};
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.85rem;
+  font-weight: 500;
+`;
+
+const KeyTrack = styled.div`
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  overflow: hidden;
 `;
 
 const KeyDisplay = styled(motion.div)`
   color: ${props => props.theme.colors.text};
-  background: ${props => props.theme.colors.primary}20;
-  border: 1px solid ${props => props.theme.colors.primary};
-  border-radius: 4px;
-  padding: 0.5rem 1rem;
-  margin: 0 0.25rem;
-  min-width: 40px;
+  background: ${props => props.theme.colors.primary}22;
+  border: 1px solid ${props => props.theme.colors.primary}88;
+  border-radius: 8px;
+  padding: 0.4rem 0.7rem;
+  min-width: 36px;
   text-align: center;
-  font-family: monospace;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.85rem;
   flex-shrink: 0;
 `;
 
 const PlaceholderText = styled.div`
   color: ${props => props.theme.colors.text}80;
   font-style: italic;
-  text-align: center;
-  width: 100%;
+  text-align: left;
+  flex: 1;
   user-select: none;
 `;
 
 interface KeyHistoryProps {
   keys: string[];
-  maxKeys?: number;
 }
 
-const KeyHistory: React.FC<KeyHistoryProps> = ({ keys, maxKeys = 15 }) => {
-  const displayKeys = keys.slice(-maxKeys).reverse();
+const KeyHistory: React.FC<KeyHistoryProps> = ({ keys }) => {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const fittedCap = useRef<number | null>(null);
+  const measuredLength = useRef(0);
+  const [visibleCount, setVisibleCount] = useState(48);
+  const displayKeys = keys.slice(-visibleCount).reverse();
+
+  useLayoutEffect(() => {
+    const track = trackRef.current;
+    if (!track) {
+      return;
+    }
+
+    const measure = () => {
+      if (measuredLength.current !== keys.length) {
+        measuredLength.current = keys.length;
+        fittedCap.current = null;
+      }
+
+      if (keys.length === 0) {
+        return;
+      }
+
+      const styles = getComputedStyle(track);
+      const gap = parseFloat(styles.columnGap || styles.gap) || 0;
+      const available = track.clientWidth;
+      const chips = Array.from(track.querySelectorAll<HTMLElement>('[data-key]'));
+      if (chips.length === 0 || available <= 0) {
+        return;
+      }
+
+      let used = 0;
+      let fitted = 0;
+      for (const chip of chips) {
+        const next = used + (fitted > 0 ? gap : 0) + chip.offsetWidth;
+        if (next > available + 1) {
+          break;
+        }
+        used = next;
+        fitted += 1;
+      }
+
+      if (fitted === 0) {
+        return;
+      }
+
+      if (fitted < chips.length) {
+        fittedCap.current = fitted;
+        if (fitted !== visibleCount) {
+          setVisibleCount(fitted);
+        }
+        return;
+      }
+
+      if (fittedCap.current != null && chips.length >= fittedCap.current) {
+        return;
+      }
+
+      const spare = available - used;
+      const narrowest = Math.min(...chips.map((chip) => chip.offsetWidth));
+      const extra = Math.floor((spare + gap) / (narrowest + gap));
+      if (keys.length > fitted && extra > 0) {
+        setVisibleCount(Math.min(keys.length, fitted + extra));
+      }
+    };
+
+    measure();
+    const observer = new ResizeObserver(() => {
+      fittedCap.current = null;
+      measure();
+    });
+    observer.observe(track);
+    return () => observer.disconnect();
+  }, [keys, visibleCount]);
 
   return (
     <HistoryContainer>
-      <AnimatePresence mode="popLayout">
-        {displayKeys.length === 0 ? (
-          <PlaceholderText>
-            Key History - Press keys to see your typing history displayed here
-          </PlaceholderText>
-        ) : (
-          displayKeys.map((key, index) => (
-            <KeyDisplay
-              key={`${key}-${keys.length - index}`}
-              initial={{ opacity: 0, x: -40, scale: 0.8 }}
-              animate={{ opacity: 1, x: 0, scale: 1 }}
-              exit={{ opacity: 0, x: 40, scale: 0.8 }}
-              transition={{ 
-                duration: 0.2,
-                type: "spring",
-                stiffness: 500,
-                damping: 30
-              }}
-            >
-              {formatKeyName(key)}
-            </KeyDisplay>
-          ))
-        )}
-      </AnimatePresence>
+      <LabelGroup>
+        <HistoryLabel>History</HistoryLabel>
+        <HistoryCount>{keys.length}</HistoryCount>
+      </LabelGroup>
+      <KeyTrack ref={trackRef}>
+        <AnimatePresence mode="popLayout">
+          {displayKeys.length === 0 ? (
+            <PlaceholderText>
+              Press a key to log it here
+            </PlaceholderText>
+          ) : (
+            displayKeys.map((key, index) => (
+              <KeyDisplay
+                key={`${key}-${keys.length - index}`}
+                data-key="true"
+                initial={{ opacity: 0, scale: 0.92 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.92 }}
+                transition={{ duration: 0.12 }}
+              >
+                {formatKeyName(key)}
+              </KeyDisplay>
+            ))
+          )}
+        </AnimatePresence>
+      </KeyTrack>
     </HistoryContainer>
   );
 };

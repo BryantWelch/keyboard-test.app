@@ -17,11 +17,11 @@ interface TestContainerProps {
 const Container = styled.div`
   background-color: ${props => props.theme.colors.background};
   border: 1px solid ${props => props.theme.colors.primary};
-  border-radius: 12px;
-  margin: 2rem auto;
+  border-radius: 16px;
+  margin: 1.25rem auto 0.5rem;
   width: 100%;
   max-width: 1200px;
-  min-height: 400px;
+  min-width: 0;
   position: relative;
   box-shadow: ${props => props.theme.shadows.main};
   display: grid;
@@ -31,19 +31,21 @@ const Container = styled.div`
 const TabContainer = styled.div<{ position: 'top' | 'bottom' }>`
   display: flex;
   justify-content: flex-start;
-  gap: 0.5rem;
-  padding: 1rem;
-  ${props => props.position === 'bottom' ? 'border-top' : 'border-bottom'}: 1px solid ${props => props.theme.colors.primary}40;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  padding: 0.85rem;
+  ${props => props.position === 'bottom' ? 'border-top' : 'border-bottom'}: 1px solid ${props => props.theme.colors.primary}33;
 `;
 
 const Tab = styled.button<{ active: boolean }>`
   background: ${props => props.active ? props.theme.colors.primary : 'transparent'};
   color: ${props => props.active ? props.theme.colors.background : props.theme.colors.text};
-  border: 1px solid ${props => props.theme.colors.primary};
-  border-radius: 6px;
-  padding: 0.5rem 1rem;
+  border: 1px solid ${props => props.active ? props.theme.colors.primary : `${props.theme.colors.primary}55`};
+  border-radius: 999px;
+  padding: 0.45rem 0.9rem;
   cursor: pointer;
-  transition: ${props => props.theme.transitions.default};
+  font-weight: 600;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 
   &:hover {
     background: ${props => props.active ? props.theme.colors.primary : `${props.theme.colors.primary}20`};
@@ -51,13 +53,14 @@ const Tab = styled.button<{ active: boolean }>`
 `;
 
 const ContentArea = styled(motion.div)`
-  padding: 2rem;
-  min-height: 300px;
+  padding: 1.25rem 1rem 1.5rem;
+  min-height: 280px;
+  min-width: 0;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
-  overflow: hidden;
 `;
 
 const LayoutPreview = styled.div`
@@ -124,7 +127,7 @@ const ResetButton = styled(Tab)`
 
 const ThemeGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(108px, 1fr));
   gap: 0.75rem;
   width: 100%;
   max-width: 1000px;
@@ -198,23 +201,18 @@ const ThemeContainer = styled.div`
 `;
 
 const slideVariants = {
-  enter: (direction: number) => ({
-    x: direction > 0 ? 1000 : -1000,
+  enter: {
     opacity: 0,
-    position: "absolute" as const
-  }),
-  center: {
-    x: 0,
-    opacity: 1,
-    zIndex: 1,
-    position: "relative" as const
+    y: 8,
   },
-  exit: (direction: number) => ({
-    x: direction < 0 ? 1000 : -1000,
+  center: {
+    opacity: 1,
+    y: 0,
+  },
+  exit: {
     opacity: 0,
-    zIndex: 0,
-    position: "absolute" as const
-  })
+    y: -8,
+  },
 };
 
 interface TabData {
@@ -225,21 +223,14 @@ interface TabData {
 
 const TestContainer: React.FC<TestContainerProps> = ({ onKeyPress, onReset, onTabChange }) => {
   const [activeTab, setActiveTab] = useState('keyTest');
-  const [direction, setDirection] = useState(0);
   const [currentLayout, setCurrentLayout] = useState<KeyboardType>('75%');
   const [currentType, setCurrentType] = useState<KeyboardLayoutType>('qwerty');
   const [keyboardKey, setKeyboardKey] = useState(0);
   const { currentTheme, setTheme } = useTheme();
 
   const handleTabClick = (tabId: string) => {
-    const tabOrder = ['keyTest', 'rolloverTest', 'typingTest', 'layout', 'type', 'themes'];
-    const currentIndex = tabOrder.indexOf(activeTab);
-    const newIndex = tabOrder.indexOf(tabId);
-    setDirection(newIndex > currentIndex ? 1 : -1);
-    
     setActiveTab(tabId);
     
-    // Call the onTabChange callback if provided
     if (onTabChange) {
       onTabChange(tabId);
     }
@@ -266,7 +257,6 @@ const TestContainer: React.FC<TestContainerProps> = ({ onKeyPress, onReset, onTa
       onReset();
     }
     
-    // Dispatch custom events for test components
     window.dispatchEvent(new CustomEvent('rollover-test-reset'));
     window.dispatchEvent(new CustomEvent('typing-test-reset'));
     
@@ -480,18 +470,14 @@ const TestContainer: React.FC<TestContainerProps> = ({ onKeyPress, onReset, onTa
         ))}
       </TabContainer>
 
-      <AnimatePresence custom={direction} initial={false} mode="sync">
+      <AnimatePresence initial={false} mode="wait">
         <ContentArea
           key={activeTab}
-          custom={direction}
           variants={slideVariants}
           initial="enter"
           animate="center"
           exit="exit"
-          transition={{
-            x: { type: "tween", duration: 0.3, ease: "easeInOut" },
-            opacity: { duration: 0.2 }
-          }}
+          transition={{ duration: 0.16 }}
         >
           {getCurrentContent()}
         </ContentArea>

@@ -8,7 +8,7 @@ const FooterContainer = styled.footer`
   margin-top: auto;
   text-align: center;
   position: relative;
-  border-top: 1px solid ${props => props.theme.colors.primary}22;
+  border-top: 1px solid color-mix(in srgb, ${props => props.theme.colors.text} 14%, transparent);
 `;
 
 const FooterContent = styled.div`
@@ -83,7 +83,7 @@ const Copyright = styled.div`
   text-align: center;
   margin-top: 3rem;
   padding: 2rem 2rem 0;
-  border-top: 1px solid ${props => props.theme.colors.primary}22;
+  border-top: 1px solid color-mix(in srgb, ${props => props.theme.colors.text} 14%, transparent);
   color: ${props => props.theme.colors.text};
   opacity: 0.6;
   font-size: 0.9rem;

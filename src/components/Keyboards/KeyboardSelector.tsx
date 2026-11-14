@@ -6,6 +6,8 @@ import Keyboard65 from './Keyboard65';
 import Keyboard75 from './Keyboard75';
 import KeyboardTKL from './KeyboardTKL';
 import KeyboardFull from './KeyboardFull';
+import FitWidth from './FitWidth';
+import LiveStats from './LiveStats';
 import { KeyboardLayoutType } from './keyboardTypes';
 
 // We'll add more keyboard layouts as they're implemented
@@ -20,20 +22,17 @@ interface KeyboardSelectorProps {
 
 const Container = styled.div`
   width: 100%;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
-  min-height: 400px; /* Add minimum height to ensure visibility */
-  overflow: visible; /* Change from hidden to visible */
 `;
 
 const KeyboardContainer = styled(motion.div)`
-  width: 100%;
+  width: max-content;
   display: flex;
   justify-content: center;
-  position: relative; /* Change from absolute to relative */
-  height: 100%; /* Add height to fill the container */
 `;
 
 // Add a styled component for the keyboard info header
@@ -61,18 +60,15 @@ const TypeName = styled.span`
 
 // Animation variants
 const containerVariants = {
-  enter: (direction: number) => ({
-    x: direction > 0 ? '100%' : '-100%',
-    opacity: 0
-  }),
-  center: {
-    x: 0,
-    opacity: 1
+  enter: {
+    opacity: 0,
   },
-  exit: (direction: number) => ({
-    x: direction > 0 ? '-100%' : '100%',
-    opacity: 0
-  })
+  center: {
+    opacity: 1,
+  },
+  exit: {
+    opacity: 0,
+  },
 };
 
 // Function to format the keyboard type name for display
@@ -104,20 +100,10 @@ const KeyboardSelector: React.FC<KeyboardSelectorProps> = ({
   keyboardType = 'qwerty'
 }) => {
   const [currentLayout, setCurrentLayout] = useState<KeyboardType>(initialLayout);
-  const [direction, setDirection] = useState<number>(0);
 
-  // Update layout when initialLayout prop changes
   useEffect(() => {
-    if (initialLayout !== currentLayout) {
-      // Determine direction based on layout order
-      const layoutOrder: KeyboardType[] = ['60%', '65%', '75%', 'TKL', 'Full'];
-      const currentIndex = layoutOrder.indexOf(currentLayout);
-      const newIndex = layoutOrder.indexOf(initialLayout);
-      setDirection(newIndex > currentIndex ? 1 : -1);
-      
-      setCurrentLayout(initialLayout);
-    }
-  }, [initialLayout, currentLayout]);
+    setCurrentLayout(initialLayout);
+  }, [initialLayout]);
 
   // Render the appropriate keyboard based on the selected layout
   const renderKeyboard = () => {
@@ -144,22 +130,22 @@ const KeyboardSelector: React.FC<KeyboardSelectorProps> = ({
         Current Configuration: <LayoutName>&nbsp;{currentLayout}&nbsp;</LayoutName> with <TypeName>&nbsp;{formatTypeName(keyboardType)}&nbsp;</TypeName> Layout
       </KeyboardInfo>
       
-      <AnimatePresence custom={direction} initial={false} mode="sync">
-        <KeyboardContainer
-          key={currentLayout}
-          custom={direction}
-          variants={containerVariants}
-          initial="enter"
-          animate="center"
-          exit="exit"
-          transition={{
-            x: { type: "tween", duration: 0.3, ease: "easeInOut" },
-            opacity: { duration: 0.2 }
-          }}
-        >
-          {renderKeyboard()}
-        </KeyboardContainer>
-      </AnimatePresence>
+      <LiveStats />
+
+      <FitWidth watch={`${currentLayout}-${keyboardType}`}>
+        <AnimatePresence initial={false} mode="wait">
+          <KeyboardContainer
+            key={currentLayout}
+            variants={containerVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 0.16 }}
+          >
+            {renderKeyboard()}
+          </KeyboardContainer>
+        </AnimatePresence>
+      </FitWidth>
     </Container>
   );
 };

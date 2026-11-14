@@ -14,17 +14,37 @@ const RolloverContainer = styled.div`
 `;
 
 const KeyCountDisplay = styled.div`
-  font-size: 2.5rem;
-  font-weight: bold;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 1.25rem;
   color: ${props => props.theme.colors.primary};
   text-align: center;
-  margin-bottom: 1rem;
-  
+`;
+
+const CountBlock = styled.div`
+  font-size: 2.6rem;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+
   span {
-    font-size: 1.2rem;
+    display: block;
+    margin-top: 0.35rem;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     color: ${props => props.theme.colors.text};
-    margin-left: 0.5rem;
+    opacity: 0.65;
   }
+`;
+
+const Rating = styled.p`
+  margin: 0;
+  color: ${props => props.theme.colors.text};
+  font-size: 1.05rem;
+  font-weight: 600;
 `;
 
 const KeysContainer = styled.div`
@@ -102,18 +122,25 @@ const getKeyIdentifier = (e: KeyboardEvent): string => {
 
 const RolloverTest: React.FC<RolloverTestProps> = ({ onKeyDown, onKeyUp }) => {
   const [pressedKeys, setPressedKeys] = useState<Set<string>>(new Set());
+  const [peak, setPeak] = useState(0);
+
+  const describePeak = (count: number): string => {
+    if (count === 0) return 'Hold several keys at once';
+    if (count < 3) return '2-key rollover';
+    if (count < 6) return 'Limited rollover';
+    if (count === 6) return '6-key rollover';
+    return 'N-key rollover range';
+  };
 
   // Effect to handle reset
   useEffect(() => {
-    // Function to clear pressed keys
     const clearPressedKeys = () => {
       setPressedKeys(new Set());
+      setPeak(0);
     };
     
-    // Listen for the custom reset event from TestContainer
     window.addEventListener('rollover-test-reset', clearPressedKeys);
     
-    // Cleanup
     return () => {
       window.removeEventListener('rollover-test-reset', clearPressedKeys);
     };
@@ -143,6 +170,7 @@ const RolloverTest: React.FC<RolloverTestProps> = ({ onKeyDown, onKeyUp }) => {
       setPressedKeys(prev => {
         const newSet = new Set(prev);
         newSet.add(keyName);
+        setPeak(currentPeak => Math.max(currentPeak, newSet.size));
         return newSet;
       });
       
@@ -183,8 +211,17 @@ const RolloverTest: React.FC<RolloverTestProps> = ({ onKeyDown, onKeyUp }) => {
   return (
     <RolloverContainer>
       <KeyCountDisplay>
-        {pressedKeys.size} <span>keys pressed simultaneously</span>
+        <CountBlock>
+          {pressedKeys.size}
+          <span>Held now</span>
+        </CountBlock>
+        <CountBlock>
+          {peak}
+          <span>Peak</span>
+        </CountBlock>
       </KeyCountDisplay>
+
+      <Rating>{describePeak(peak)}</Rating>
       
       <InstructionText>
         Press multiple keys at once to test your keyboard's rollover capability. 

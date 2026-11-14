@@ -1,7 +1,7 @@
 // Test options
 export type TestMode = 'wordCount' | 'timed';
 export type WordCountOption = 10 | 25 | 50 | 100 | 250;
-export type TimeOption = '30s' | '1m' | '2m' | '3m';
+export type TimeOption = '15s' | '30s' | '1m' | '2m' | '3m';
 
 // Word status
 export type WordStatus = 'upcoming' | 'current' | 'correct' | 'incorrect';

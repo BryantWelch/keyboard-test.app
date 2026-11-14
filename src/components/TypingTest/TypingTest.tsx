@@ -81,63 +81,66 @@ const TestArea = styled.div`
 `;
 
 const WordsDisplay = styled.div`
-  font-size: 1.2rem;
-  line-height: 1.8;
-  color: ${props => props.theme.colors.text}80;
-  white-space: pre-wrap;
-  word-break: break-word;
-  max-height: none;
-  overflow-y: visible;
-  padding-right: 10px;
+  font-size: 1.35rem;
+  line-height: 1.75;
+  height: calc(1.35rem * 1.75 * 5);
+  position: relative;
+  color: ${props => props.theme.colors.text};
+  overflow: hidden;
+  cursor: text;
+  user-select: none;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
 `;
 
-const Word = styled.span<{ status: WordStatus }>`
-  margin-right: 0.5rem;
-  
-  ${props => props.status === 'current' && `
-    background-color: ${props.theme.colors.primary}40;
-    border-radius: 4px;
-    padding: 2px 4px;
-    font-weight: bold;
-    box-shadow: 0 0 3px ${props.theme.colors.primary}80;
-    position: relative;
-  `}
-  
-  ${props => props.status === 'correct' && `
-    color: ${props.theme.colors.text}80;
-  `}
-  
-  ${props => props.status === 'incorrect' && `
-    color: ${props.theme.colors.error};
-    text-decoration: line-through;
-    font-weight: bold;
-  `}
-  
-  ${props => props.status === 'upcoming' && `
-    color: ${props.theme.colors.text}60;
-  `}
+const Word = styled.span<{ $status: WordStatus }>`
+  position: relative;
+  color: ${props => {
+    if (props.$status === 'incorrect') return props.theme.colors.error;
+    if (props.$status === 'correct') return `${props.theme.colors.text}99`;
+    return `${props.theme.colors.text}cc`;
+  }};
+  text-decoration: ${props => props.$status === 'incorrect' ? 'underline' : 'none'};
+`;
+
+const Char = styled.span<{ $state: 'wait' | 'ok' | 'bad' }>`
+  color: ${props => {
+    if (props.$state === 'ok') return props.theme.colors.primary;
+    if (props.$state === 'bad') return props.theme.colors.error;
+    return 'inherit';
+  }};
+  text-decoration: ${props => props.$state === 'bad' ? 'underline' : 'none'};
+`;
+
+const Caret = styled.span<{ $chars: number }>`
+  position: absolute;
+  left: ${props => props.$chars}ch;
+  top: 0.12em;
+  width: 2px;
+  height: 1.15em;
+  background: ${props => props.theme.colors.primary};
+  pointer-events: none;
+  animation: caret-blink 1s steps(1) infinite;
+
+  @keyframes caret-blink {
+    50% { opacity: 0; }
+  }
 `;
 
 const InputField = styled.input`
-  width: 100%;
-  padding: 0.8rem;
-  font-size: 1.1rem;
-  border: 1px solid ${props => props.theme.colors.primary}40;
-  border-radius: 4px;
-  background-color: ${props => props.theme.colors.background};
-  color: ${props => props.theme.colors.text};
-  margin-top: 1rem;
-  
-  &:focus {
-    outline: none;
-    border-color: ${props => props.theme.colors.primary};
-    box-shadow: 0 0 0 2px ${props => props.theme.colors.primary}30;
-  }
+  position: fixed;
+  opacity: 0;
+  pointer-events: none;
+  width: 1px;
+  height: 1px;
+  border: 0;
+  padding: 0;
 `;
 
 const StatsContainer = styled.div`
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
+  gap: 0.5rem;
   width: 100%;
   margin-top: 1rem;
 `;
@@ -165,6 +168,7 @@ const StatLabel = styled.div`
 `;
 
 const ActionButton = styled(motion.button)`
+  align-self: center;
   background-color: ${props => props.theme.colors.primary};
   color: ${props => props.theme.colors.background};
   border: none;
@@ -246,7 +250,8 @@ const TypingTest: React.FC<TypingTestProps> = ({ onReset }) => {
   
   // Refs
   const inputRef = useRef<HTMLInputElement>(null);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const currentWordRef = useRef<HTMLSpanElement>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const wordsRef = useRef<TypedWord[]>([]);
   const startTimeRef = useRef<number | null>(null);
 
@@ -258,6 +263,8 @@ const TypingTest: React.FC<TypingTestProps> = ({ onReset }) => {
   // Convert timed option to seconds
   const getTimeInSeconds = (option: TimeOption): number => {
     switch (option) {
+      case '15s':
+        return 15;
       case '30s':
         return 30;
       case '1m':
@@ -522,13 +529,33 @@ const TypingTest: React.FC<TypingTestProps> = ({ onReset }) => {
     if (isTestActive && startTime) {
       const statsInterval = setInterval(() => {
         refreshStats();
-      }, 1000);
+      }, 250);
       
       return () => clearInterval(statsInterval);
     }
   }, [isTestActive, startTime, refreshStats]);
   
-  // Effect to focus input field when component mounts
+  useEffect(() => {
+    const node = currentWordRef.current;
+    const parent = node?.parentElement;
+    if (!node || !parent) {
+      return;
+    }
+
+    if (currentWordIndex === 0) {
+      parent.scrollTop = 0;
+      return;
+    }
+
+    const lineHeight = parseFloat(getComputedStyle(parent).lineHeight) || node.offsetHeight;
+    const lastComfortableLine = parent.scrollTop + parent.clientHeight - lineHeight * 2;
+    if (node.offsetTop > lastComfortableLine + 1) {
+      const target = node.offsetTop - (parent.clientHeight - lineHeight * 2);
+      parent.scrollTo({ top: Math.max(0, target), behavior: 'smooth' });
+    } else if (node.offsetTop < parent.scrollTop) {
+      parent.scrollTop = node.offsetTop;
+    }
+  }, [currentWordIndex]);
   useEffect(() => {
     // Focus the input field after a short delay to ensure it's rendered
     const timer = setTimeout(() => {
@@ -584,6 +611,13 @@ const TypingTest: React.FC<TypingTestProps> = ({ onReset }) => {
             <OptionLabel>Time Limit</OptionLabel>
             <OptionButtons>
               <OptionButton 
+                active={timedOption === '15s'} 
+                onClick={() => setTimedOption('15s')}
+                disabled={isTestActive}
+              >
+                15s
+              </OptionButton>
+              <OptionButton 
                 active={timedOption === '30s'} 
                 onClick={() => setTimedOption('30s')}
                 disabled={isTestActive}
@@ -623,15 +657,38 @@ const TypingTest: React.FC<TypingTestProps> = ({ onReset }) => {
           </Timer>
         )}
         
-        <WordsDisplay>
-          {words.map((word, index) => (
-            <Word 
-              key={index} 
-              status={word.status}
-            >
-              {word.text}
-            </Word>
-          ))}
+        <WordsDisplay onClick={() => inputRef.current?.focus()}>
+          {words.map((word, index) => {
+            const isCurrent = word.status === 'current';
+            return (
+              <Word
+                key={`${word.text}-${index}`}
+                $status={word.status}
+                ref={isCurrent ? currentWordRef : undefined}
+              >
+                {isCurrent ? (
+                  <>
+                    {word.text.split('').map((character, characterIndex) => {
+                      let state: 'wait' | 'ok' | 'bad' = 'wait';
+                      if (characterIndex < currentInput.length) {
+                        state = currentInput[characterIndex] === character ? 'ok' : 'bad';
+                      }
+                      return (
+                        <Char key={characterIndex} $state={state}>
+                          {character}
+                        </Char>
+                      );
+                    })}
+                    {currentInput.length > word.text.length && (
+                      <Char $state="bad">{currentInput.slice(word.text.length)}</Char>
+                    )}
+                    <Caret $chars={currentInput.length} />
+                  </>
+                ) : word.text}
+                {index < words.length - 1 ? ' ' : ''}
+              </Word>
+            );
+          })}
         </WordsDisplay>
         
         <InputField 
@@ -639,7 +696,7 @@ const TypingTest: React.FC<TypingTestProps> = ({ onReset }) => {
           value={currentInput}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
-          placeholder={isTestComplete ? "Test complete" : "Type here to start test..."}
+          aria-label="Type the words shown above"
           disabled={isTestComplete}
           autoComplete="off"
           autoCapitalize="off"

@@ -1,156 +1,152 @@
 import React, { memo } from 'react';
 import styled from 'styled-components';
-import { motion } from 'framer-motion';
-import { Microsoft } from '@mui/icons-material';
 import { KeyboardLayoutType, getKeyMapping } from './keyboardTypes';
 
-// Key size as a string like '1u', '1.25u', '6.25u', etc.
 export type KeySize = `${number}u`;
 
-export interface KeyLabel {
+export interface KeyProps {
   primary: string;
   secondary?: string;
-}
-
-export interface KeyProps {
-  label: KeyLabel;
+  keyCode: string;
   keyboardType?: KeyboardLayoutType;
   size?: KeySize;
   isPressed?: boolean;
   isTested?: boolean;
   isSpecialKey?: boolean;
+  pressCount?: number;
   className?: string;
   style?: React.CSSProperties;
-  onKeyPress?: () => void;
+  onActivate?: (code: string) => void;
 }
 
-// Base unit for key size in pixels
 const KEY_UNIT = 50;
 
-// Parse key size string (e.g., '1.25u') to number multiplier
 const parseKeySize = (size: KeySize): number => {
   return parseFloat(size.replace('u', '')) || 1;
 };
 
-const KeyContainer = styled(motion.div)<{ $width: number }>`
+const KeyContainer = styled.div<{ $width: number }>`
   position: relative;
   width: ${props => props.$width}px;
   height: ${KEY_UNIT}px;
   margin: 2px;
   cursor: pointer;
   user-select: none;
+  touch-action: manipulation;
 `;
 
-const KeyCap = styled(motion.div)<{ 
-  $isTested: boolean; 
+const KeyCap = styled.div<{
+  $isTested: boolean;
   $isSpecialKey: boolean;
   $isPressed: boolean;
 }>`
   position: relative;
   width: 100%;
   height: 100%;
-  border-radius: 6px;
-  background: ${props => {
+  border-radius: 8px;
+  background-color: ${props => {
     if (props.$isPressed) {
-      // Key is currently being pressed - show accent color
-      return props.theme.colors.accent + '40';
-    } else if (props.$isTested) {
-      // Key was tested but not currently pressed - show a subtle highlight
-      return props.$isSpecialKey ? 
-        props.theme.colors.secondary + '80' : 
-        props.theme.colors.primary + '80';
-    } else {
-      // Key was not tested or pressed - show normal color
-      return props.$isSpecialKey ? 
-        props.theme.colors.secondary : 
-        props.theme.colors.primary;
+      return props.theme.colors.accent;
     }
+    if (props.$isTested) {
+      return props.$isSpecialKey
+        ? `color-mix(in srgb, ${props.theme.colors.secondary} 72%, white)`
+        : `color-mix(in srgb, ${props.theme.colors.primary} 72%, white)`;
+    }
+    return props.$isSpecialKey ? props.theme.colors.secondary : props.theme.colors.primary;
   }};
-  color: ${props => props.theme.colors.text};
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0) 40%);
+  color: ${props => props.$isPressed ? props.theme.colors.background : props.theme.colors.text};
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  box-shadow: 
-    0 1px 1px rgba(0,0,0,0.2),
-    0 2px 2px rgba(0,0,0,0.15),
-    0 3px 3px rgba(0,0,0,0.1);
-  transform-style: preserve-3d;
-  transform: perspective(1000px) rotateX(10deg);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  transition: background-color 0.2s ease;
+  border: 1px solid ${props => props.$isPressed ? props.theme.colors.accent : 'rgba(255, 255, 255, 0.16)'};
+  box-shadow: ${props => props.$isPressed
+    ? 'inset 0 2px 6px rgba(0, 0, 0, 0.28)'
+    : 'inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 3px 0 rgba(0, 0, 0, 0.28)'};
+  transform: translateY(${props => props.$isPressed ? '3px' : '0'});
+  transition: transform 60ms ease, background-color 70ms ease, box-shadow 60ms ease, color 70ms ease;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 `;
 
-const KeyText = styled.div<{ $isPressed: boolean }>`
+const KeyText = styled.div<{ $dense: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-family: inherit;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
   line-height: 1;
-  color: ${props => props.$isPressed ? 
-    props.theme.colors.accent : 
-    props.theme.colors.text};
-  transition: color 0.1s ease-in-out;
+  text-align: center;
+  padding: 0 3px;
+  max-width: 100%;
 `;
 
-const PrimaryText = styled.span`
-  font-size: 14px;
-  margin-bottom: 2px;
+const PrimaryText = styled.span<{ $dense: boolean }>`
+  font-size: ${props => props.$dense ? '12px' : '16px'};
   font-weight: 500;
+  letter-spacing: -0.01em;
 `;
 
 const SecondaryText = styled.span`
-  font-size: 12px;
+  margin-top: 2px;
+  font-size: 11px;
   opacity: 0.8;
-  font-weight: 400;
 `;
 
-const WindowsIcon = styled(Microsoft)`
-  font-size: 16px !important;
+const Heat = styled.span<{ $level: number }>`
+  position: absolute;
+  left: 7px;
+  right: 7px;
+  bottom: 4px;
+  height: 3px;
+  border-radius: 99px;
+  background: ${props => props.theme.colors.background};
+  opacity: ${props => 0.35 + props.$level * 0.65};
+  transform: scaleX(${props => 0.3 + props.$level * 0.7});
+  transform-origin: left center;
 `;
 
 const Key: React.FC<KeyProps> = ({
-  label,
+  primary,
+  secondary,
+  keyCode,
   keyboardType = 'qwerty',
   size = '1u',
   isPressed = false,
   isTested = false,
   isSpecialKey = false,
+  pressCount = 0,
   className,
   style,
-  onKeyPress,
+  onActivate,
 }) => {
-  // Get the mapped key based on keyboard type
-  const mappedLabel = keyboardType !== 'qwerty' && !isSpecialKey ? 
-    getKeyMapping(label.primary, keyboardType) : 
-    label.primary;
-  
-  // Calculate width based on size
-  const width = parseKeySize(size) * KEY_UNIT;
-  
-  // Handle special cases for key display
-  const displayLabel = mappedLabel === 'Meta' ? <WindowsIcon /> : mappedLabel;
-  
+  const mappedLabel = keyboardType !== 'qwerty' && !isSpecialKey
+    ? getKeyMapping(primary, keyboardType)
+    : primary;
+  const dense = mappedLabel.length > 4;
+  const heat = Math.min(pressCount, 12) / 12;
+
   return (
-    <KeyContainer 
-      $width={width}
+    <KeyContainer
+      $width={parseKeySize(size) * KEY_UNIT}
       className={className}
       style={style}
-      onClick={onKeyPress}
-      whileTap={{ scale: 0.95 }}
-      transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+      onClick={() => onActivate?.(keyCode)}
     >
       <KeyCap
-        $isTested={!!isTested}
-        $isSpecialKey={!!isSpecialKey}
-        $isPressed={!!isPressed}
-        style={{ height: '100%' }}
+        $isTested={isTested}
+        $isSpecialKey={isSpecialKey}
+        $isPressed={isPressed}
       >
-        <KeyText $isPressed={!!isPressed}>
-          <PrimaryText>{displayLabel}</PrimaryText>
-          {label.secondary && <SecondaryText>{label.secondary}</SecondaryText>}
+        <KeyText $dense={dense}>
+          <PrimaryText $dense={dense}>{mappedLabel}</PrimaryText>
+          {secondary && <SecondaryText>{secondary}</SecondaryText>}
         </KeyText>
+        {pressCount > 0 && <Heat $level={heat} />}
       </KeyCap>
     </KeyContainer>
   );

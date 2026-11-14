@@ -17,13 +17,23 @@ const AppWrapper = styled.div`
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
+  background:
+    radial-gradient(900px 420px at 50% -120px, ${props => props.theme.colors.primary}24, transparent 60%),
+    ${props => props.theme.colors.background};
 `;
 
 const MainContent = styled.main`
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding-top: 4.5rem; /* Add padding to account for the fixed navbar */
+  width: min(1240px, 100%);
+  min-width: 0;
+  margin: 0 auto;
+  padding: 4.25rem 1rem 0;
+
+  @media (max-width: 720px) {
+    padding: 4rem 0.65rem 0;
+  }
 `;
 
 const App: React.FC = () => {

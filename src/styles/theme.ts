@@ -5,7 +5,8 @@ export const theme = {
     primary: '#7f8eee',
     secondary: '#9c1579',
     accent: '#e53d63',
-    glass: 'rgba(1, 3, 10, 0.8)'
+    glass: 'rgba(1, 3, 10, 0.8)',
+    error: '#ff5d73'
   },
   gradients: {
     logo: `linear-gradient(to right, #7f8eee, #9c1579)`,

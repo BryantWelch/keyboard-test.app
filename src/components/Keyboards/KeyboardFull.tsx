@@ -16,10 +16,8 @@ const KeyboardContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  padding: 1rem;
-  transform: scale(0.90);
-  transform-origin: top center;
+  width: max-content;
+  padding: 0.25rem 0;
 `;
 
 const KeyboardFrame = styled(motion.div)`
@@ -96,15 +94,17 @@ const NumpadEnterKey = styled.div`
 `;
 
 const KeyboardFull: React.FC<KeyboardFullProps> = ({ onKeyPress, onReset, keyboardType }) => {
-  const [{ testedKeys, pressedKeys }, { handleKeyPress }] = useKeyboardEvents(onKeyPress, onReset);
+  const [{ testedKeys, pressedKeys, pressCounts }, { handleKeyPress }] = useKeyboardEvents(onKeyPress, onReset);
 
-  // Helper function to create key props
   const createKeyProps = (displayName: string, keyName: string, secondary?: string, isSpecial: boolean = false, width?: number) => {
     const props = {
-      label: { primary: displayName, secondary },
-      onKeyPress: () => handleKeyPress(keyName),
+      primary: displayName,
+      secondary,
+      keyCode: keyName,
+      onActivate: handleKeyPress,
       isTested: testedKeys.has(keyName),
       isPressed: pressedKeys.has(keyName),
+      pressCount: pressCounts.get(keyName) ?? 0,
       isSpecialKey: isSpecial,
       keyboardType,
     };

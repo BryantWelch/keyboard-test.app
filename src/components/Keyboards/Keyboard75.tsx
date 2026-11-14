@@ -17,8 +17,8 @@ const KeyboardContainer = styled(motion.div)`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  padding: 2rem;
+  width: max-content;
+  padding: 0.25rem 0;
 `;
 
 const KeyboardFrame = styled.div`
@@ -80,14 +80,16 @@ const layoutVariants = {
 
 const Keyboard75: React.FC<Keyboard75Props> = ({ onKeyPress, onReset, keyboardType }) => {
   // Use the keyboard events hook to handle key presses
-  const [{ testedKeys, pressedKeys }, { handleKeyPress }] = useKeyboardEvents(onKeyPress, onReset);
+  const [{ testedKeys, pressedKeys, pressCounts }, { handleKeyPress }] = useKeyboardEvents(onKeyPress, onReset);
 
-  // Helper function to create key props
   const createKeyProps = (displayName: string, keyName: string, secondary?: string, isSpecial: boolean = false, size?: KeySize) => ({
-    label: { primary: displayName, secondary },
-    onKeyPress: () => handleKeyPress(keyName),
+    primary: displayName,
+    secondary,
+    keyCode: keyName,
+    onActivate: handleKeyPress,
     isTested: testedKeys.has(keyName),
     isPressed: pressedKeys.has(keyName),
+    pressCount: pressCounts.get(keyName) ?? 0,
     isSpecialKey: isSpecial,
     size,
     keyboardType,
