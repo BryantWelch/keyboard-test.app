@@ -77,6 +77,10 @@ npm install
 npm start
 ```
 
+## Deployment
+
+`netlify.toml` builds with `npm run build` and publishes `build/`. Hashed files in `/static/*` are cached for a year. The site is [keyboard-test.app](https://keyboard-test.app).
+
 ## 🛠 Tech Stack
 
 - React
