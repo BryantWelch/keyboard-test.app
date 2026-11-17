@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { KeyboardArrowDown, OpenInNew } from '@mui/icons-material';
-import { Chevron, Menu, MenuButton, MenuCard, MenuLink, MenuPanel } from './menu';
+import { Chevron, Menu, MenuButton, MenuCard, MenuLink, MenuPanel, useHoverMenu } from './menu';
 
 const Columns = styled.div`
   display: grid;
@@ -43,6 +43,7 @@ const Category = styled.button<{ $active?: boolean }>`
 
   @media (max-width: 720px) {
     width: auto;
+    min-height: 40px;
   }
 `;
 
@@ -227,21 +228,28 @@ const CatalogMenu: React.FC<{
   label: string;
   categories: CatalogCategory[];
 }> = ({ label, categories }) => {
-  const [open, setOpen] = useState(false);
+  const menu = useHoverMenu();
   const [active, setActive] = useState(categories[0].short);
   const category = categories.find(item => item.short === active) ?? categories[0];
 
   return (
     <Menu
-      onMouseEnter={() => setOpen(true)}
-      onMouseLeave={() => setOpen(false)}
+      ref={menu.ref}
+      onMouseEnter={menu.onMouseEnter}
+      onMouseLeave={menu.onMouseLeave}
     >
-      <MenuButton type="button" $open={open} aria-expanded={open} aria-haspopup="true">
+      <MenuButton
+        type="button"
+        $open={menu.open}
+        aria-expanded={menu.open}
+        aria-haspopup="true"
+        onClick={menu.onButtonClick}
+      >
         {label}
-        <Chevron $open={open}><KeyboardArrowDown /></Chevron>
+        <Chevron $open={menu.open}><KeyboardArrowDown /></Chevron>
       </MenuButton>
 
-      <MenuPanel $open={open} $wide>
+      <MenuPanel $open={menu.open} $wide>
         <MenuCard>
           <Columns>
             <Categories>
@@ -250,6 +258,7 @@ const CatalogMenu: React.FC<{
                   key={item.short}
                   type="button"
                   $active={item.short === active}
+                  onClick={() => setActive(item.short)}
                   onMouseEnter={() => setActive(item.short)}
                   onFocus={() => setActive(item.short)}
                 >

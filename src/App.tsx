@@ -32,7 +32,7 @@ const MainContent = styled.main`
   padding: 4.25rem 1rem 0;
 
   @media (max-width: 720px) {
-    padding: 4rem 0.65rem 0;
+    padding: calc(4rem + env(safe-area-inset-top, 0px)) max(0.65rem, env(safe-area-inset-right, 0px)) 0 max(0.65rem, env(safe-area-inset-left, 0px));
   }
 `;
 
